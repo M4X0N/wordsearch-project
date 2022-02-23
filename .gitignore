@@ -1,0 +1,6 @@
+**/__pycache__
+output/**
+uploaded-texts/**
+uploaded-lexicons/**
+texts/**
+lexicons/**
