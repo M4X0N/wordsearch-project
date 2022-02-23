@@ -1,6 +1,6 @@
-from ..logic.classes.secret_text import secret_text
-from ..logic.classes.lexicon import lexicon
-from ..logic.run_algo import run_algorithm
+from ...logic.classes.secret_text import secret_text
+from ...logic.classes.lexicon import lexicon
+from ...logic.run_algo import run_algorithm
 
 def run(text_name, lexicon_name, min_word_length, max_word_length, from_stage):
     # open text and lexicon
