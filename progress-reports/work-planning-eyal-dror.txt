@@ -1,0 +1,13 @@
+missions:
+--------
+frontend
+--------
+1. Finish word search form and results pane
+2. add text & lexicon upload page
+3. add output file selector
+4. connect these with react-router
+5. add advanced filtration
+-------
+backend
+-------
+1. add retrieve_output_file_names function to backend
