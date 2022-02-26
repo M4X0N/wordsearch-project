@@ -4,6 +4,7 @@ from logic.classes.lexicon import lexicon
 from logic.classes.secret_text import secret_text
 
 import os
+from os import walk
 
 api = Flask(__name__)
 
@@ -36,11 +37,8 @@ def validate_file(request_files):
 	return "good"
 
 # update files to be saved on cloud instead of locally
-@api.route("/texts/upload", methods=["POST"])
-def upload_text():
-	if request.method != "POST":
-		return "method not allowed", 405
-	
+@api.route("/texts", methods=["POST"])
+def upload_text():	
 	result, status = validate_file(request.files)
 
 	if result != "good":
@@ -51,11 +49,15 @@ def upload_text():
 	file.save(os.path.join(api.config['TEXTS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
-@api.route("/lexicons/upload", methods=["POST"])
-def upload_lexicon():
-	if request.method != "POST":
-		return "method not allowed", 405
+@api.route('/texts', methods=["GET"])
+def get_text_names():
+	texts_dir = 'uploaded-texts'
+	filenames = next(walk(texts_dir), (None, None, []))[2]
+
+	return {'filenames': filenames}, 200
 	
+@api.route("/lexicons", methods=["POST"])
+def upload_lexicon():	
 	result, status = validate_file(request.files)
 
 	if result != "good":
@@ -66,13 +68,17 @@ def upload_lexicon():
 	file.save(os.path.join(api.config['LEXICONS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
+@api.route('/lexicons', methods=["GET"])
+def get_lexicon_names():
+	lexicons_dir = 'uploaded-lexicons'
+	filenames = next(walk(lexicons_dir), (None, None, []))[2]
+
+	return {'filenames': filenames}, 200
+
 @api.route('/run_sentence_finder', methods=["POST"])
 def run_sentence_finder():
-	if request.method != "POST":
-		return "method not allowed", 405
-
-	text_name    = request.json['text_name']
-	lexicon_name = request.json['lexicon_name']
+	text_name       = request.json['text_name']
+	lexicon_name    = request.json['lexicon_name']
 	min_word_length = request.json['min_word_length']
 	max_word_length = request.json['max_word_length']
 
