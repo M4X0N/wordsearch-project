@@ -37,7 +37,7 @@ def validate_file(request_files):
 	return "good"
 
 # update files to be saved on cloud instead of locally
-@api.route("/texts", methods=["POST"])
+@api.route("/files/texts", methods=["POST"])
 def upload_text():	
 	result, status = validate_file(request.files)
 
@@ -49,14 +49,14 @@ def upload_text():
 	file.save(os.path.join(api.config['TEXTS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
-@api.route('/texts', methods=["GET"])
+@api.route('/files/texts', methods=["GET"])
 def get_text_names():
 	texts_dir = 'uploaded-texts'
 	filenames = next(walk(texts_dir), (None, None, []))[2]
 
 	return {'filenames': filenames}, 200
 	
-@api.route("/lexicons", methods=["POST"])
+@api.route("/files/lexicons", methods=["POST"])
 def upload_lexicon():	
 	result, status = validate_file(request.files)
 
@@ -68,10 +68,17 @@ def upload_lexicon():
 	file.save(os.path.join(api.config['LEXICONS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
-@api.route('/lexicons', methods=["GET"])
+@api.route('/files/lexicons', methods=["GET"])
 def get_lexicon_names():
 	lexicons_dir = 'uploaded-lexicons'
 	filenames = next(walk(lexicons_dir), (None, None, []))[2]
+
+	return {'filenames': filenames}, 200
+
+@api.route('/files/sentences', methods=["GET"])
+def get_sentence_file_names():
+	sentences_dir = 'output/sentences'
+	filenames = next(walk(sentences_dir), (None, None, []))[2]
 
 	return {'filenames': filenames}, 200
 
