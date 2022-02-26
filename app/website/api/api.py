@@ -49,7 +49,7 @@ def upload_text():
 	return "the file was successfully saved", 201
 
 @api.route("/lexicons/upload", methods=["POST"])
-def upload_text():
+def upload_lexicon():
 	if request.method != "POST":
 		return "method not allowed", 405
 	
