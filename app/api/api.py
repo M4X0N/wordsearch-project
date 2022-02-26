@@ -1,5 +1,8 @@
 from flask import Flask, request
-from run import run
+from logic.run_algorithm import run_algorithm
+from logic.classes.lexicon import lexicon
+from logic.classes.secret_text import secret_text
+
 import os
 
 api = Flask(__name__)
@@ -82,6 +85,13 @@ def run_sentence_finder():
 	checkpoint_filename = f'{text_name}-{lexicon_name}.txt'
 	stage = 1 if os.path.isfile(f'output/found-word-indices/{checkpoint_filename}') else 0
 
-	run(text_name, lexicon_name, min_word_length, max_word_length, from_stage=stage)
+	# open text and lexicon
+	text = secret_text(text_name)
+	lexicon = lexicon(lexicon_name)
+
+	# restrict lexicon word lengths
+	lexicon.set_word_limit(min_word_length, max_word_length)
+
+	run_algorithm(text, lexicon, from_stage=stage, save_results=True)
 
 	return "the file was successfully processed and saved by the server", 201

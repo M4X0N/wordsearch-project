@@ -1,4 +1,4 @@
-from website.api import api
+from api import api
 
 # update paths
 api.config['LEXICONS_FOLDER'] = '/home/jeremy/Desktop/me/project/lexicons/'

@@ -1,7 +1,7 @@
-from find_word_indices import run_find_all_with_MP
-from get_sentences import get_sentence_trees
-from classes.secret_text import secret_text
-from classes.lexicon import lexicon
+from .find_word_indices import run_find_all_with_MP
+from .get_sentences import get_sentence_trees
+from .classes.secret_text import secret_text
+from .classes.lexicon import lexicon
 from datetime import datetime
 from functools import reduce
 import json

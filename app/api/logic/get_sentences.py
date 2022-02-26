@@ -1,4 +1,4 @@
-from classes.sentence_tree import sentence_tree
+from .classes.sentence_tree import sentence_tree
 
 def get_sentence_trees(word_lengths, text):
 	'''
