@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from logic.run_algorithm import run_algorithm
 from logic.classes.lexicon import lexicon
 from logic.classes.secret_text import secret_text
@@ -7,6 +8,7 @@ import os
 from os import walk
 
 api = Flask(__name__)
+CORS(api, origins="http://localhost:3000")
 
 def allowed_text_file_type(filename):
 	ALLOWED_TEXT_FILE_TYPES = ['txt', 'docx']
@@ -16,11 +18,17 @@ def allowed_lexicon_file_type(filename):
 	ALLOWED_LEXICON_FILE_TYPES = ['txt']
 	return '.' in filename and filename.split('.')[-1] in ALLOWED_LEXICON_FILE_TYPES
 
+def valid_letter_offset(letter_offset):
+	if not letter_offset.isnumeric():
+		return False
+	
+	return int(letter_offset) > 0
+
 def valid_min_max_lengths(min, max):
-	if not isinstance(min, int) or not isinstance(max, int):
+	if not min.isnumeric() or not max.isnumeric():
 		return False
 
-	return 0 < min and min < max
+	return 0 < int(min) and int(min) < int(max)
 
 def validate_file(request_files):
 	if 'file' not in request_files:
@@ -54,7 +62,7 @@ def get_text_names():
 	texts_dir = 'uploaded-texts'
 	filenames = next(walk(texts_dir), (None, None, []))[2]
 
-	return {'filenames': filenames}, 200
+	return {'fileNames': filenames}, 200
 	
 @api.route("/files/lexicons", methods=["POST"])
 def upload_lexicon():	
@@ -73,38 +81,41 @@ def get_lexicon_names():
 	lexicons_dir = 'uploaded-lexicons'
 	filenames = next(walk(lexicons_dir), (None, None, []))[2]
 
-	return {'filenames': filenames}, 200
+	return {'fileNames': filenames}, 200
 
 @api.route('/files/sentences', methods=["GET"])
 def get_sentence_file_names():
 	sentences_dir = 'output/sentences'
 	filenames = next(walk(sentences_dir), (None, None, []))[2]
 
-	return {'filenames': filenames}, 200
+	return {'fileNames': filenames}, 200
 
-@api.route('/run_sentence_finder', methods=["POST"])
+@api.route('/sentence-finder', methods=["POST"])
 def run_sentence_finder():
 	text_name       = request.json['text_name']
 	lexicon_name    = request.json['lexicon_name']
+	letter_offset   = request.json['letter_offset']
 	min_word_length = request.json['min_word_length']
 	max_word_length = request.json['max_word_length']
 
 	if not allowed_text_file_type(text_name) or not allowed_lexicon_file_type(lexicon_name):
 		return "file format isn't supported", 400
+	if not valid_letter_offset(letter_offset):
+		return "invalid letter offset", 422
 	if not valid_min_max_lengths(min_word_length, max_word_length):
 		return "invalid word length limits entered", 422
 
 	# check if checkpoint file already exists in output. If so, run algorithm from stage 1
-	checkpoint_filename = f'{text_name}-{lexicon_name}.txt'
+	checkpoint_filename = f'{text_name}-{lexicon_name}-{letter_offset}.txt'
 	stage = 1 if os.path.isfile(f'output/found-word-indices/{checkpoint_filename}') else 0
 
 	# open text and lexicon
-	text = secret_text(text_name)
-	lexicon = lexicon(lexicon_name)
+	text = secret_text(text_name, int(letter_offset))
+	lex = lexicon(lexicon_name)
 
 	# restrict lexicon word lengths
-	lexicon.set_word_limit(min_word_length, max_word_length)
+	lex.set_word_limit(int(min_word_length), int(max_word_length))
 
-	run_algorithm(text, lexicon, from_stage=stage, save_results=True)
+	run_algorithm(text, lex, int(letter_offset), from_stage=stage, save_results=True)
 
 	return "the file was successfully processed and saved by the server", 201

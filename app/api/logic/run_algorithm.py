@@ -7,7 +7,7 @@ from functools import reduce
 import json
 import os
 
-def run_algorithm(text, lexicon, from_stage=0, save_results=True):
+def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=True):
 	'''
 	execute the main algorithm.
 	text is the text to find sentences from.
@@ -19,7 +19,7 @@ def run_algorithm(text, lexicon, from_stage=0, save_results=True):
 	'''
 
 	# "output/found-word-indices/{text.name}-{lexicon.name}.txt" is appended to the cwd the script is run from
-	found_word_path = f'output/found-word-indices/{text.name}-{lexicon.name}.txt'
+	found_word_path = f'output/found-word-indices/{text.name}-{lexicon.name}-{letter_offset}.txt'
 
 	if from_stage == 0:
 		os.makedirs(os.path.dirname(found_word_path), exist_ok=True)
@@ -45,9 +45,10 @@ def run_algorithm(text, lexicon, from_stage=0, save_results=True):
 	all_sentence_trees = get_sentence_trees(word_lengths, text.text)
 
 	if save_results:
-		all_sentences = reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees))
+		# append all sentences to one long list and remove all sentences with less than two words
+		all_sentences = list(filter(lambda sentence: len(sentence.split(' '))  > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees))))
 
-		save_sentences_path = f'output/sentences/{text.name}-{lexicon.name}.txt'
+		save_sentences_path = f'output/sentences/{text.name}-{lexicon.name}-{letter_offset}.txt'
 		os.makedirs(os.path.dirname(save_sentences_path), exist_ok=True)
 
 		with open(save_sentences_path, 'w', encoding='utf8') as save_file:
@@ -58,8 +59,8 @@ def run_algorithm(text, lexicon, from_stage=0, save_results=True):
 # usage example
 if __name__ == "__main__":
 	# open text and lexicon
-	lexicon = lexicon("dictionary2.txt")
 	het = secret_text("het_and_punish.txt")
+	lexicon = lexicon("dictionary2.txt")
 
 	# restrict lexicon word lengths
 	lexicon.set_word_limit(min_len=3, max_len=12)

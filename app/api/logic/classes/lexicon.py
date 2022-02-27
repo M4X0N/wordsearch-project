@@ -5,7 +5,7 @@ class lexicon():
 	def __init__(self, path, delim=";"):
 		self.delimiter = delim
 		# "uploaded_texts/{path}" path is appended to the cwd the script is run from
-		self.words = self.read_lexicon(f'uploaded_lexicons/{path}')
+		self.words = self.read_lexicon(f'uploaded-lexicons/{path}')
 		self.name = path.split('.')[0]
 
 	def read_lexicon(self, path):

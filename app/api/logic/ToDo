@@ -1,9 +1,4 @@
-Tree handling
--Tree depth search
--Print/Export tree to file 
-
 File handling:
--Convert torah text into hebrew characters as per Email from Prof. Rips
 -Take text(s) and combine or cut into single text the same length as Torah
 -Check text cleaning
 

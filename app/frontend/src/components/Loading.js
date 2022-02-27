@@ -1,8 +1,8 @@
-import '../css/SearchLoading.css';
+import '../css/Loading.css';
 
-function SearchLoading(props) {
+function Loading(props) {
   return (
-    <div class="modal fade" id="searchLoading" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -14,7 +14,7 @@ function SearchLoading(props) {
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <h1 class="modal-title mx-auto">החיפוש מתבצע כעת...</h1>
+                    <h1 class="modal-title mx-auto">{props.message}</h1>
                 </div>
             </div>
         </div>
@@ -22,4 +22,4 @@ function SearchLoading(props) {
   );
 }
 
-export default SearchLoading;
+export default Loading;

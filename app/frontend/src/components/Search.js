@@ -5,7 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import BasicSearch from './BasicSearch';
 import AdvancedSearch from './AdvancedSearch';
-import SearchLoading from './SearchLoading';
+import Loading from './Loading';
 
 function Search() {
   const [advanced, setAdvanced] = useState(false);
@@ -31,7 +31,7 @@ function Search() {
             <button type="button" onClick={toggleAdvanced} data-bs-toggle="collapse" data-bs-target=".search" class={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
             </div>
         </form>
-        <SearchLoading></SearchLoading>
+        <Loading message="החיפוש מתבצע כעת..." id="searchLoading"></Loading>
     </div>
   );
 }
