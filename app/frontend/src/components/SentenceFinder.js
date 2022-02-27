@@ -47,7 +47,7 @@ function SentenceFinder(props) {
                             return (
                                 <div class="row border-end" key={name}>
                                     <div class="form-check">
-                                        <input name="text" value={index} checked={index === text} onChange={changeOption} id={`textOption${index}`} class="form-check-input" type="radio"></input>
+                                        <input name="text" value={index} onChange={changeOption} id={`textOption${index}`} class="form-check-input" type="radio"></input>
                                         <label for={`textOption${index}`} class="lead">{name}</label>
                                     </div>
                                 </div>
@@ -62,9 +62,9 @@ function SentenceFinder(props) {
                     {
                         lexiconNames.map((name, index) => {
                             return (
-                                <div class="row ms-3" key={name}>
+                                <div class="row ps-3 border-start" key={name}>
                                     <div class="form-check">
-                                        <input name="lexicon" value={index} check={index === lexicon} onChange={changeOption} id={`lexiconOption${index}`} class="form-check-input" type="radio"></input>
+                                        <input name="lexicon" value={index} onChange={changeOption} id={`lexiconOption${index}`} class="form-check-input" type="radio"></input>
                                         <label for={`lexiconOption${index}`} class="lead">{name}</label>
                                     </div>
                                 </div>
