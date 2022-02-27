@@ -19,9 +19,9 @@ function Search() {
   }
 
   return (
-    <div className="container mt-3">
+    <div className="mt-3">
         <form>
-            <p class="display-1">חיפוש</p>
+            <p class="display-1 text-center">חיפוש</p>
             <div class="accordion" id="accordion">
             <BasicSearch></BasicSearch>
             <AdvancedSearch></AdvancedSearch>

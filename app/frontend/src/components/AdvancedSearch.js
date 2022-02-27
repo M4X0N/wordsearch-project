@@ -135,12 +135,12 @@ function AdvancedSearch() {
         <p class="display-6">פרמטרים לחיפוש:</p>
           <label for="avgWordLength">אורך מילה ממוצע</label>
           <div class="form-group input-group mb-3">
-            <input value={avgWordLengthCheckbox} onChange={handleParameterChange} id="avgWordLengthCheckbox" class="form-check form-check-input position-static mx-3" type="checkbox"></input>
+            <input value={avgWordLengthCheckbox} onChange={handleParameterChange} id="avgWordLengthCheckbox" class="form-check form-check-input position-static me-3" type="checkbox"></input>
             <input value={avgWordLength} onChange={handleParameterChange} id="avgWordLength" class="form-control" type="number" placeholder="0" disabled></input>
           </div>
           <label for="minWords">כמות מילים מינימלית במשפט:</label>
           <div class="form-group input-group mb-3">
-            <input value={minWordsCheckbox} onChange={handleParameterChange} id="minWordsCheckbox" class="form-check form-check-input position-static mx-3" type="checkbox"></input>
+            <input value={minWordsCheckbox} onChange={handleParameterChange} id="minWordsCheckbox" class="form-check form-check-input position-static me-3" type="checkbox"></input>
             <input value={minWords} onChange={handleParameterChange} id="minWords" class="form-control" type="number" placeholder="0" disabled></input>
           </div>
         </div>
