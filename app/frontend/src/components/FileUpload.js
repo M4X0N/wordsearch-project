@@ -41,8 +41,8 @@ function FileUpload(props){
 			)}
 		</div>
 		<div>
-			<button class="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
 			<button type="submit" class="btn btn-success w-25 m-1" onClick={handleSubmission}>העלה</button>
+			<button class="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
 		</div>
 	</div>
 	)
