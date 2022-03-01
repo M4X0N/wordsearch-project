@@ -42,7 +42,7 @@ def validate_file(request_files):
 	if not allowed_text_file_type(file.filename):
 		return "file format isn't supported", 400
 
-	return "good"
+	return "good", 200
 
 # update files to be saved on cloud instead of locally
 @api.route("/files/texts", methods=["POST"])
@@ -54,6 +54,8 @@ def upload_text():
 
 	file = request.files['file']
 
+	os.makedirs(os.path.dirname('uploaded-texts/'), exist_ok=True)
+	
 	file.save(os.path.join(api.config['TEXTS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
@@ -72,6 +74,8 @@ def upload_lexicon():
 		return result, status
 
 	file = request.files['file']
+
+	os.makedirs(os.path.dirname('uploaded-lexicons/'), exist_ok=True)
 
 	file.save(os.path.join(api.config['LEXICONS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
