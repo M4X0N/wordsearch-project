@@ -26,8 +26,8 @@ function FileUpload(props){
 	};
 
 	return(
-   <div >
-	   <p class="display-4">העלאת {props.filePurpose}</p>
+   <div className="mt-3">
+	   <p class="display-3 text-center">העלאת {props.filePurpose}</p>
 	   <div>
 			<input type="file" name="file" class="form-control" accept={props.acceptedTypes} onChange={changeHandler} />
 			{isFilePicked ? (

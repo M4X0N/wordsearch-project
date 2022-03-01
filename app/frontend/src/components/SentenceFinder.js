@@ -61,7 +61,7 @@ function SentenceFinder(props) {
     <div className="sentence-finder mt-3">
         <form class="text-center">
             <div class="row mb-3">
-                <p class="display-1 text-center">מציאת משפטים</p>
+                <p class="display-3 text-center">מציאת משפטים</p>
                 <div class="texts col-6 text-center">
                     <div class="row">
                         <p class="display-5">טקסטים:</p>

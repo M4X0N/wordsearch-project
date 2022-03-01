@@ -6,10 +6,13 @@ import '../css/App.css';
 import Search from './Search';
 import SentenceFinder from "./SentenceFinder";
 import FileUpload from "./FileUpload";
+import Navbar from "./Navbar";
 axios.defaults.baseURL = `http://localhost:5000`;
 
 function App() {
   return (
+    <>
+    <Navbar></Navbar>
     <div className="app container">
       <Router>
         <Routes>
@@ -22,6 +25,7 @@ function App() {
         </Routes>
       </Router>
     </div>
+    </>
   );
 }
 
