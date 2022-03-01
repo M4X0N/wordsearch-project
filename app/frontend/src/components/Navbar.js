@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Navbar() {
@@ -8,16 +9,16 @@ function Navbar() {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="/sentence-finder">מצא משפטים </a>
+            <Link class="nav-link" to="/sentence-finder">מצא משפטים </Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/search">חיפוש בטקסט קיים</a>
+            <Link class="nav-link" to="/search">חיפוש בטקסט קיים</Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/text-upload">העלה טקסט</a>
+            <Link class="nav-link" to="/text-upload">העלה טקסט</Link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/lexicon-upload">העלה לקסיקון</a>
+            <Link class="nav-link" to="/lexicon-upload">העלה לקסיקון</Link>
           </li>
         </ul>
       </div>

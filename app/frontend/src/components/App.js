@@ -12,9 +12,9 @@ axios.defaults.baseURL = `http://localhost:5000`;
 function App() {
   return (
     <>
-    <Navbar></Navbar>
-    <div className="app container">
-      <Router>
+    <Router>
+      <Navbar></Navbar>
+      <div className="app container">
         <Routes>
           <Route path="/" element={<SentenceFinder></SentenceFinder>}></Route>
           <Route path="/search" element={<Search></Search>}></Route>
@@ -23,8 +23,8 @@ function App() {
           <Route path="/text-upload" element={<FileUpload filePurpose="טקסט" acceptedTypes=".txt,.docx"></FileUpload>}></Route>
           <Route path="*" element={<Search></Search>}></Route>
         </Routes>
-      </Router>
-    </div>
+      </div>
+    </Router>
     </>
   );
 }

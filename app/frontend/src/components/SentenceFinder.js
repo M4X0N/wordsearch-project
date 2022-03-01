@@ -45,16 +45,20 @@ function SentenceFinder(props) {
     setLexicon(event.currentTarget.value);
   }
 
-  const runSentenceFinder = (event) => {
+  const runSentenceFinder = async (event) => {
     event.preventDefault();
 
-    axios.post("/sentence-finder", {
+    try {
+        await axios.post("/sentence-finder", {
         text_name: text.split(' ')[0],
         lexicon_name: lexicon.split(' ')[0],
         letter_offset: letterOffset,
         min_word_length: minWordLength,
         max_word_length: maxWordLength
-    })
+        });
+    } catch (error) {
+        console.log("an unexpected error was encountered: ", error);
+    }
   }
 
   return (
