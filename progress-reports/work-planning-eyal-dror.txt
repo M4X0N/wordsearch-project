@@ -4,11 +4,8 @@ frontend
 --------
 - add results pane to search page
 - add output file selector to search page
-- add text & lexicon upload page
 - add advanced filtration in frontend
 - add validations to search page, sentence finder page, text & lexicon upload page
-- add message notifying of sentence finding completion
-- add navigation component
 -------
 backend
 -------

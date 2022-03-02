@@ -87,12 +87,27 @@ def get_lexicon_names():
 
 	return {'fileNames': filenames}, 200
 
-@api.route('/files/sentences', methods=["GET"])
+@api.route('/files/sentences/names', methods=["GET"])
 def get_sentence_file_names():
 	sentences_dir = 'output/sentences'
 	filenames = next(walk(sentences_dir), (None, None, []))[2]
 
 	return {'fileNames': filenames}, 200
+
+@api.route('/files/sentences/<path:filename>', methods=["GET"])
+def get_sentence_file(filename):
+	if len(filename) == 0:
+		return "file name must be non empty", 400
+
+	sentences_dir = 'output/sentences'
+	file_path = f'{sentences_dir}/{filename}'
+
+	if not os.path.isfile(file_path):
+		return "the specified file doesn't exist", 400
+
+	with open(file_path, 'r') as f:
+		return f.read(), 200
+
 
 @api.route('/sentence-finder', methods=["POST"])
 def run_sentence_finder():
