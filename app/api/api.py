@@ -99,8 +99,8 @@ def get_sentence_file(filename):
 	if len(filename) == 0:
 		return "file name must be non empty", 400
 
-	sentences_dir = 'output/sentences'
-	file_path = f'{sentences_dir}/{filename}'
+	sentences_dir = os.path.normpath('output/sentences')
+	file_path = os.path.join(sentences_dir, filename)
 
 	if not os.path.isfile(file_path):
 		return "the specified file doesn't exist", 400
