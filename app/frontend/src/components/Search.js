@@ -32,6 +32,28 @@ function Search() {
     setSentenceList(res);
   }
 
+  const formatSentences = (sentences) => {
+    return sentences.map((sentence) => {
+      return sentence.split(" ").map((word) => { 
+        return {"word":word,"length": word.length}
+        })
+      })
+  }
+
+  const matchAdvancedPattern = (formattedSentences) => {
+    return formattedSentences.filter((sentence) => {
+      if (sentence.length < searchData.advancedSearch.minWords || (sentence.reduce((a,b) => a+b.length,0)/sentence.length) < searchData.advancedSearch.avgWordLength) {
+        return false
+      }
+      else {
+        for (let i = 0; i < searchData.advancedSearch.words.length; i++) {
+          if (searchData.advancedSearch.words[i].word !== "" && sentence[i].word !== searchData.advancedSearch.words[i].word ||
+              searchData.advancedSearch.words[i].word === "" && searchData.advancedSearch.words[i].length !== sentence[i].length) {
+            return false
+        }}
+        return true}})
+  }
+
   const search = async (event) => {
     event.preventDefault();
 
@@ -40,14 +62,14 @@ function Search() {
     }
 
     if (advanced) {
-      
+      setFilteredSentences(matchAdvancedPattern(formatSentences(sentenceList)))
     } else {
       setFilteredSentences(sentenceList.filter((sentence) => {
-        return sentence.includes(searchData.basic)
+        return sentence.includes(searchData.basicSearch.phrase)
       }))
     }   
 
-    
+    console.log(filteredSentences)
   }
 
   const changeFileSelection = (event) => {
