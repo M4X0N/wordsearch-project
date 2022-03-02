@@ -32,9 +32,9 @@ function FileUpload(props){
 			<input type="file" name="file" class="form-control" accept={props.acceptedTypes} onChange={changeHandler} />
 			{isFilePicked ? (
 				<div class="display-6 p-1" style={{ fontSize:20}}>
-					<p>Filename: {selectedFile.name}</p>
-					<p>Filetype: {selectedFile.type}</p>
-					<p>Size in bytes: {selectedFile.size}</p>
+					<p><a>שם קובץ:</a> {selectedFile.name}</p>
+					<p><a>סוג קובץ:</a> {selectedFile.type}</p>
+					<p><a> גודל קובץ בבייטים:</a> {selectedFile.size}</p>
 				</div>
 			) : (
 				<p>בחר קובץ עם אחת הסיומות הבאות: {props.acceptedTypes}</p>

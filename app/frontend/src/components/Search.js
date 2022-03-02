@@ -18,7 +18,10 @@ function Search() {
   const [sentenceFileNames, setSentenceFileNames] = useState([]);
   const [fileSelection, setFileSelection] = ('')
   const [sentenceList, setSentenceList] = useState([]);
-
+  const [filteredSentences, setFilteredSentences] = useState([]);
+  const searchData = {
+    "basic":"אבא"
+  }
   const toggleAdvanced = () => {
     setAdvanced(!advanced)
   }
@@ -27,6 +30,14 @@ function Search() {
     event.preventDefault();
 
     // Eyal's sentence loader goes here before Dror's search
+
+    if (advanced) {
+      
+    } else {
+      setFilteredSentences(sentenceList.filter((sentence) => {
+        return sentence.includes(searchData.basic)
+      }))
+    }   
   }
 
   const changeFileSelection = (event) => {
