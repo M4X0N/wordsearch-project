@@ -8,12 +8,6 @@ import SearchContext from "./SearchContext";
 function AdvancedSearch() {
   const { searchData, setSearchData } = useContext(SearchContext);
 
-  // const [avgWordLengthCheckbox, setAvgWordLengthCheckbox] = useState(false);
-  // const [avgWordLength, setAvgWordLength] = useState(0);
-
-  // const [minWordsCheckbox, setMinWordsCheckbox] = useState(false);
-  // const [minWords, setMinWords] = useState(0);
-
   const focusOnLast = () => {
     const numOfWordItems = document.getElementsByClassName('word-item').length;
     const lastWordItem = document.getElementsByClassName('word-item')[numOfWordItems - 1];
