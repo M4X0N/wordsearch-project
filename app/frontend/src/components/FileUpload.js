@@ -27,9 +27,9 @@ function FileUpload(props){
 
 	return(
    <div className="mt-3">
-	   <p class="display-3 text-center">העלאת {props.filePurpose}</p>
+	   <p className="display-3 text-center">העלאת {props.filePurpose}</p>
 	   <div>
-			<input type="file" name="file" class="form-control" accept={props.acceptedTypes} onChange={changeHandler} />
+			<input type="file" name="file" className="form-control" accept={props.acceptedTypes} onChange={changeHandler} />
 			{isFilePicked ? (
 				<div class="display-6 p-1" style={{ fontSize:20}}>
 					<p><a>שם קובץ:</a> {selectedFile.name}</p>
@@ -41,8 +41,8 @@ function FileUpload(props){
 			)}
 		</div>
 		<div>
-			<button type="submit" class="btn btn-success w-25 m-1" onClick={handleSubmission}>העלה</button>
-			<button class="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
+			<button type="submit" className="btn btn-success w-25 m-1" onClick={handleSubmission}>העלה</button>
+			<button className="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
 		</div>
 	</div>
 	)
