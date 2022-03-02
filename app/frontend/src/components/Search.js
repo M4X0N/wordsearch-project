@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 import '../css/Search.css';
@@ -10,34 +10,34 @@ import Loading from './Loading';
 import SearchContext from './SearchContext';
 
 function Search() {
+  const sentenceListRef = useRef([]);
+  const [advanced, setAdvanced] = useState(false);
+  const [sentenceFileNames, setSentenceFileNames] = useState([]);
+  const [fileSelection, setFileSelection] = useState('')
+  const [filteredSentences, setFilteredSentences] = useState([]);
+  const [searchData, setSearchData] = useState({ basicSearch: { phrase: '' }, advancedSearch: { words: [{word: '', length: ''}], avgWordLength: 0, minWords: 0 }});
+  const value = { searchData, setSearchData };
+
   useEffect(async () => {
     const sentenceFileNames = await axios.get('/files/sentences/names');
     setSentenceFileNames(sentenceFileNames.data.fileNames);
   }, [])
 
-  const [advanced, setAdvanced] = useState(false);
-  const [sentenceFileNames, setSentenceFileNames] = useState([]);
-  const [fileSelection, setFileSelection] = useState('')
-  const [sentenceList, setSentenceList] = useState([]);
-  const [filteredSentences, setFilteredSentences] = useState([]);
-  const [searchData, setSearchData] = useState({ basicSearch: { phrase: '' }, advancedSearch: { words: [{word: '', length: ''}], avgWordLength: 0, minWords: 0 }});
-  const value = { searchData, setSearchData };
-
   const toggleAdvanced = () => {
     setAdvanced(!advanced)
   }
 
-  const loadSentences = async (event) => {
-    const res = await axios.get(`/files/sentences/${fileSelection}`,);
-    setSentenceList(res);
+  const loadSentences = async () => {
+    const res = await axios.get(`/files/sentences/${fileSelection}`);
+    sentenceListRef.current = res.data;
   }
 
   const formatSentences = (sentences) => {
     return sentences.map((sentence) => {
       return sentence.split(" ").map((word) => { 
         return {"word":word,"length": word.length}
-        })
       })
+    })
   }
 
   const matchAdvancedPattern = (formattedSentences) => {
@@ -57,19 +57,17 @@ function Search() {
   const search = async (event) => {
     event.preventDefault();
 
-    if(sentenceList.length === 0) {
+    if(sentenceListRef.current.length === 0) {
       await loadSentences();
     }
 
     if (advanced) {
-      setFilteredSentences(matchAdvancedPattern(formatSentences(sentenceList)))
+      setFilteredSentences(matchAdvancedPattern(formatSentences(sentenceListRef.current)))
     } else {
-      setFilteredSentences(sentenceList.filter((sentence) => {
+      setFilteredSentences(sentenceListRef.current.filter((sentence) => {
         return sentence.includes(searchData.basicSearch.phrase)
       }))
-    }   
-
-    console.log(filteredSentences)
+    }
   }
 
   const changeFileSelection = (event) => {
