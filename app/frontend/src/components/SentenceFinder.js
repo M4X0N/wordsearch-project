@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import '../css/SentenceFinder.css';
 
 import axios from "axios";
+import { Modal } from "bootstrap";
 
 function SentenceFinder(props) {
   const [textNames, setTextNames] = useState([]);
@@ -12,9 +13,11 @@ function SentenceFinder(props) {
 
   const [text, setText] = useState('');
   const [lexicon, setLexicon] = useState('');
-  const [letterOffset, setLetterOffset] = useState(0);
-  const [minWordLength, setMinWordLength] = useState(0);
-  const [maxWordLength, setMaxWordLength] = useState(0);
+  const [letterOffset, setLetterOffset] = useState('');
+  const [minWordLength, setMinWordLength] = useState('');
+  const [maxWordLength, setMaxWordLength] = useState('');
+
+  const [wasValidated, setWasValidated] = useState(false);
 
   useEffect(async () => {
     const textNames = await axios.get("/files/texts");
@@ -45,8 +48,30 @@ function SentenceFinder(props) {
     setLexicon(event.currentTarget.value);
   }
 
+  const validateInput = () => {
+    const validateNumber = (number) => {
+        return number !== '' && !isNaN(number) && parseInt(number) > 0
+    }
+
+    return text !== '' && lexicon !== '' &&
+        validateNumber(letterOffset) &&
+        validateNumber(minWordLength) &&
+        validateNumber(maxWordLength) &&
+        parseInt(minWordLength) < parseInt(maxWordLength);
+  }
+
   const runSentenceFinder = async (event) => {
     event.preventDefault();
+
+    if (!validateInput()) {
+        setWasValidated(true);
+        return;
+    }
+
+    setWasValidated(false);
+
+    const modal = new Modal(document.getElementById("sentenceFinderLoading"));
+    modal.show();
 
     try {
         await axios.post("/sentence-finder", {
@@ -63,7 +88,7 @@ function SentenceFinder(props) {
 
   return (
     <div className="sentence-finder mt-3">
-        <form className="text-center">
+        <form className={`text-center ${wasValidated ? 'was-validated' : ''}`} noValidate>
             <div className="row mb-3">
                 <p className="display-3 text-center">מציאת משפטים</p>
                 <div className="texts col-6 text-center">
@@ -75,7 +100,7 @@ function SentenceFinder(props) {
                             return (
                                 <div className="row border-end" key={name}>
                                     <div className="form-check">
-                                        <input name="text" value={name} onChange={changeOption} id={`textOption${index}`} className="form-check-input" type="radio"></input>
+                                        <input name="text" value={name} onChange={changeOption} id={`textOption${index}`} className="form-check-input" type="radio" required></input>
                                         <label htmlFor={`textOption${index}`} className="lead">{name}</label>
                                     </div>
                                 </div>
@@ -85,14 +110,14 @@ function SentenceFinder(props) {
                 </div>
                 <div className="lexicons col-6 text-center">
                     <div className="row">
-                            <p className="display-5">מילונים:</p>
+                        <p className="display-5">מילונים:</p>
                     </div>
                     {
                         lexiconNames.map((name, index) => {
                             return (
                                 <div className="row ps-3 border-start" key={name}>
                                     <div className="form-check">
-                                        <input name="lexicon" value={name} onChange={changeOption} id={`lexiconOption${index}`} className="form-check-input" type="radio"></input>
+                                        <input name="lexicon" value={name} onChange={changeOption} id={`lexiconOption${index}`} className="form-check-input" type="radio" required></input>
                                         <label htmlFor={`lexiconOption${index}`} className="lead">{name}</label>
                                     </div>
                                 </div>
@@ -103,19 +128,22 @@ function SentenceFinder(props) {
             </div>
             <div className="form-group mb-3 mx-auto col-4">
                 <label className="form-text mx-3" htmlFor="letterOffset">הזן מספר אותיות לדילוג:</label>
-                <input value={letterOffset} onChange={changeLetterOffset} className="form-control" type="number" placeholder="0" id="letterOffset"></input>
+                <input value={letterOffset} onChange={changeLetterOffset} className="form-control" type="number" placeholder="0" id="letterOffset" required min="2"></input>
+                <div className="invalid-feedback">הזן מספר גדול מ-0</div>
             </div>
             <div className="row mb-3 d-flex justify-content-center">
                 <div className="col-2">
                     <label className="form-text mx-3" htmlFor="minWordLength"><small>אורך מילה מינימלי במשפט:</small></label>
-                    <input value={minWordLength} onChange={changeMinWordLength} className="form-control" type="number" placeholder="0" id="minWordLength"></input>
+                    <input value={minWordLength} onChange={changeMinWordLength} className="form-control" type="number" placeholder="0" id="minWordLength" required min="1"></input>
+                    <div className="invalid-feedback">הזן מספר גדול מ-0</div>
                 </div>
                 <div className="col-2">
                     <label className="form-text mx-3" htmlFor="maxWordLength"><small>אורך מילה מקסימלי במשפט:</small></label>
-                    <input value={maxWordLength} onChange={changeMaxWordLength} className="form-control" type="number" placeholder="0" id="maxWordLength"></input>
+                    <input value={maxWordLength} onChange={changeMaxWordLength} className="form-control" type="number" placeholder="0" id="maxWordLength" required min="1"></input>
+                    <div className="invalid-feedback">הזן מספר גדול מהמינימום</div>
                 </div>
             </div>
-            <button onClick={runSentenceFinder} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sentenceFinderLoading" type="submit">מצא משפטים</button>
+            <button onClick={runSentenceFinder} className="btn btn-primary" type="submit">מצא משפטים</button>
             <Loading message="החיפוש מתבצע כעת... פעולה זו עלולה לקחת מספר דקות" id="sentenceFinderLoading"></Loading>
         </form>
     </div>

@@ -7,7 +7,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import BasicSearch from './BasicSearch';
 import AdvancedSearch from './AdvancedSearch';
 import Loading from './Loading';
-import SearchContext from './SearchContext';
+import SearchContext from '../SearchContext';
+import { Collapse, Modal } from 'bootstrap';
 
 function Search() {
   const sentenceListRef = useRef([]);
@@ -15,8 +16,10 @@ function Search() {
   const [sentenceFileNames, setSentenceFileNames] = useState([]);
   const [fileSelection, setFileSelection] = useState('')
   const [filteredSentences, setFilteredSentences] = useState([]);
-  const [searchData, setSearchData] = useState({ basicSearch: { phrase: '' }, advancedSearch: { words: [{word: '', length: ''}], avgWordLength: 0, minWords: 0 }});
+  const [searchData, setSearchData] = useState({ basicSearch: { phrase: '' }, advancedSearch: { words: [{word: '', length: ''}], avgWordLength: '', minWords: '' }});
   const value = { searchData, setSearchData };
+
+  const [wasValidated, setWasValidated] = useState(false);
 
   useEffect(async () => {
     const sentenceFileNames = await axios.get('/files/sentences/names');
@@ -24,6 +27,14 @@ function Search() {
   }, [])
 
   const toggleAdvanced = () => {
+    const collapseList = Array.from(document.getElementsByClassName("collapse")).map((element) => {
+      return new Collapse(element, { toggle: false });
+    })
+    
+    collapseList.forEach(element => {
+      element.toggle();
+    });
+
     setAdvanced(!advanced)
   }
 
@@ -35,7 +46,7 @@ function Search() {
   const formatSentences = (sentences) => {
     return sentences.map((sentence) => {
       return sentence.split(" ").map((word) => { 
-        return {"word":word,"length": word.length}
+        return { "word": word, "length": word.length }
       })
     })
   }
@@ -50,12 +61,49 @@ function Search() {
           if (searchData.advancedSearch.words[i].word !== "" && sentence[i].word !== searchData.advancedSearch.words[i].word ||
               searchData.advancedSearch.words[i].word === "" && searchData.advancedSearch.words[i].length !== sentence[i].length) {
             return false
-        }}
+        }
+      }
         return true}})
+  }
+
+  const validateInput = () => {
+    const validateNumber = (number) => {
+      return number !== '' && !isNaN(number) && parseInt(number) > 0
+    }
+
+    if (fileSelection === '') {
+      return false;
+    }
+
+    if (!advanced) {
+      return searchData.basicSearch.phrase !== '';
+    }
+    
+    if (!document.getElementById("avgWordLength").disabled && !validateNumber(searchData.advancedSearch.avgWordLength)) {
+      return false;
+    }
+    
+    if (!document.getElementById("minWords").disabled && !validateNumber(searchData.advancedSearch.minWords)) {
+      return false;
+    }
+
+    return searchData.advancedSearch.words.every((word) => {
+      return word.word !== '' || word.length !== ''
+    });
   }
 
   const search = async (event) => {
     event.preventDefault();
+
+    if (!validateInput()) {
+      setWasValidated(true);
+      return;
+    }
+
+    const modal = new Modal(document.getElementById("searchLoading"));
+    modal.show();
+
+    setWasValidated(false);
 
     if(sentenceListRef.current.length === 0) {
       await loadSentences();
@@ -76,36 +124,35 @@ function Search() {
 
   return (
     <SearchContext.Provider value={value}>
-      <div className="mt-3">
-          <form>
-              <p className="display-3 text-center">חיפוש</p>
-              <div className="form-group col-6 mb-5 mx-auto text-center">
-                <label htmlFor="sentenceFileSelect">בחר טקסט לחיפוש משפטים: </label>
-                <select className="form-control" id="sentenceFileSelect" onChange={changeFileSelection}>
-                  <option value='' selected disabled hidden>בחר כאן</option>
-                  {
-                    sentenceFileNames.map((fileName, index) => {
-                      const data = fileName.replace(/\.[^/.]+$/, "").split('-');
-                      const text = data[0];
-                      const lexicon = data[1];
-                      const offset = data[2];
+      <form className={`mt-3 ${wasValidated ? 'was-validated' : ''}`} noValidate>
+          <p className="display-3 text-center">חיפוש</p>
+          <div className="form-group col-6 mb-5 mx-auto text-center">
+            <label htmlFor="sentenceFileSelect">בחר טקסט לחיפוש משפטים: </label>
+            <select className="form-select" id="sentenceFileSelect" onChange={changeFileSelection} required>
+              <option value='' selected disabled hidden>בחר כאן</option>
+              {
+                sentenceFileNames.map((fileName, index) => {
+                  const data = fileName.replace(/\.[^/.]+$/, "").split('-');
+                  const text = data[0];
+                  const lexicon = data[1];
+                  const offset = data[2];
 
-                      return(<option value={fileName} key={text+lexicon+offset}>הטקסט {text} עם הלקסיקון {lexicon} בדילוג {offset} אותיות</option>);
-                    })
-                  }
-                </select>
-              </div>
-              <div className="accordion" id="accordion">
-              <BasicSearch></BasicSearch>
-              <AdvancedSearch></AdvancedSearch>
-              </div>
-              <div className="d-flex justify-content-between">
-              <button type="submit" onClick={search} className="btn btn-success" data-bs-toggle="modal" data-bs-target="#searchLoading">חפש</button>
-              <button type="button" onClick={toggleAdvanced} data-bs-toggle="collapse" data-bs-target=".search" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
-              </div>
-          </form>
-          <Loading message="החיפוש מתבצע כעת..." id="searchLoading"></Loading>
-      </div>
+                  return(<option value={fileName} key={text+lexicon+offset}>הטקסט {text} עם הלקסיקון {lexicon} בדילוג {offset} אותיות</option>);
+                })
+              }
+            </select>
+            <div className='invalid-feedback'>אנא בחר טקסט לחיפוש</div>
+          </div>
+          <div className="accordion" id="accordion">
+          <BasicSearch></BasicSearch>
+          <AdvancedSearch></AdvancedSearch>
+          </div>
+          <div className="d-flex justify-content-between">
+          <button type="submit" onClick={search} className="btn btn-success">חפש</button>
+          <button type="button" onClick={toggleAdvanced} id="collapseButton" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
+          </div>
+      </form>
+      <Loading message="החיפוש מתבצע כעת..." id="searchLoading"></Loading>
     </SearchContext.Provider>
   );
 }

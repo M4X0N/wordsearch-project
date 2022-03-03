@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import "bootstrap-icons/font/bootstrap-icons.css";
 
 function FileUpload(props){
 	const [selectedFile, setSelectedFile] = useState({});
 	const [isFilePicked, setIsFilePicked] = useState(false);
+
+	const [wasValidated, setWasValidated] = useState(false);
 
 	const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
@@ -12,39 +13,56 @@ function FileUpload(props){
 	};
 	
 	const cancelChoice = (event) => {
+		event.preventDefault();
+
+		// file inputs can't be controlled in react for some reason so this needs to be done
+		document.getElementById("fileInput").value = null;
+
 		setSelectedFile(undefined);
 		setIsFilePicked(false);
 	}
-	const handleSubmission = () => {
+
+	const handleSubmission = (event) => {
+		event.preventDefault();
+
+		if (!isFilePicked || !props.acceptedTypes.includes(selectedFile.name.split('.')[1])) {
+			setWasValidated(true);
+			return;
+		}
+
+		setWasValidated(false);
+
 		const files = new FormData()
 		files.append('file', selectedFile)
+
 		if (props.filePurpose === "לקסיקון") {
    			axios.post("/files/lexicons", files)
 		} else if (props.filePurpose === "טקסט") {
 			axios.post("/files/texts", files)
 		}
-	};
+	}
 
 	return(
-   <div className="mt-3">
-	   <p className="display-3 text-center">העלאת {props.filePurpose}</p>
-	   <div>
-			<input type="file" name="file" className="form-control" accept={props.acceptedTypes} onChange={changeHandler} />
-			{isFilePicked ? (
-				<div class="display-6 p-1" style={{ fontSize:20}}>
-					<p><a>שם קובץ:</a> {selectedFile.name}</p>
-					<p><a>סוג קובץ:</a> {selectedFile.type}</p>
-					<p><a> גודל קובץ בבייטים:</a> {selectedFile.size}</p>
+	<form className={`mt-3 ${wasValidated ? 'was-validated' : ''}`} noValidate>
+		<p className="display-3 text-center">העלאת {props.filePurpose}</p>
+		<div className="d-inline">
+			<input type="file" name="file" id="fileInput" className="form-control" accept={props.acceptedTypes} onChange={changeHandler} required/>
+			<div className="invalid-feedback">אנא בחר בקובץ שקיים על מחשבך עם אחת הסיומות שמתחת</div>
+			{ isFilePicked ? (
+				<div className="display-6 p-1 d-inline" style={{ fontSize:20 }}>
+					<p>שם קובץ: {selectedFile.name}</p>
+					<p>סוג קובץ: {selectedFile.type}</p>
+					<p>גודל קובץ בבייטים: {selectedFile.size}</p>
 				</div>
 			) : (
-				<p>בחר קובץ עם אחת הסיומות הבאות: {props.acceptedTypes}</p>
+				<p className='d-flex'>בחר קובץ עם אחת הסיומות הבאות:<p className="ms-1" dir="ltr">{props.acceptedTypes}</p></p>
 			)}
 		</div>
 		<div>
 			<button type="submit" className="btn btn-success w-25 m-1" onClick={handleSubmission}>העלה</button>
-			<button className="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
+			<button type="reset" className="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
 		</div>
-	</div>
+	</form>
 	)
 }
 
