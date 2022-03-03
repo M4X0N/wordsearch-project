@@ -46,7 +46,7 @@ def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=Tru
 
 	if save_results:
 		# append all sentences to one long list and remove all sentences with less than two words
-		all_sentences = list(filter(lambda sentence: len(sentence.split(' '))  > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees))))
+		all_sentences = list(filter(lambda sentence: len(sentence.split(' ')) > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees), [])))
 
 		save_sentences_path = f'output/sentences/{text.name}-{lexicon.name}-{letter_offset}.txt'
 		os.makedirs(os.path.dirname(save_sentences_path), exist_ok=True)
