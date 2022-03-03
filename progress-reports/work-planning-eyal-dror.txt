@@ -3,9 +3,11 @@ missions:
 frontend
 --------
 - add results pane to search page
-- add output file selector to search page
-- add advanced filtration in frontend
-- add validations to search page, sentence finder page, text & lexicon upload page
+- maybe add sentence finder feedback? (messages such as sentence finder has finished running, didn't find any sentences etc.)
 -------
 backend
 -------
+-------
+cloud
+-------
+- upload project to cloud
