@@ -1,0 +1,95 @@
+14/02
+3.5 hrs of cleaning and understanding code
+--------------------------
+17/02
+19:30
+sketching website
+20:00
+break
+21:00
+finish planning and continue
+22:00
+stop (computer bricked)
+1.5 hrs
+--------------------------
+18/02
+19:30
+started
+20:00
+stop
+0.5 hrs
+--------------------------
+19/02
+more refactoring, add get_sentences function and finish api
+11:20
+started
+12:50
+stop
+15:20
+continue
+15:30
+break
+16:20
+continue
+19:45
+break
+20:30
+continue
+21:20
+break
+22:00
+continue
+22:50
+stop
+6.75 hrs
+--------------------------
+23/02
+17:30
+migrate repo, start frontend
+18:50
+break
+20:00
+continue
+22:15
+break
+22:25
+continue
+23:50
+stop
+5 hrs
+--------------------------
+24/02
+18:00
+start planning with dror
+19:30
+end planning
+1.5 hrs
+--------------------------
+25/02
+17:00
+start (continue working on word search form)
+18:50
+stop
+20:00
+continue
+21:50
+stop
+4:00
+continue
+5:15
+stop
+5 hrs
+--------------------------
+26/02
+17:30
+start
+21:10
+stop
+3.66 hrs
+--------------------------
+27/02
+23:00
+start
+00:40
+stop
+1.66 hrs
