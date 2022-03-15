@@ -2,14 +2,27 @@ missions:
 --------
 frontend
 --------
-- maybe add sentence finder feedback? (messages such as sentence finder has finished running, didn't find any sentences etc.)
+- add sentence finder feedback (messages such as sentence finder has finished running, didn't find any sentences etc.)
+- add EN localization (globe icon in the left-hand corner of the navbar which will toggle/dropdown options,
+  upon changing options the text direction will be changed accordingly 
+  and every text displayed to the user should be extracted into a languages json file)
+- add thanks page with pictures and brief bios of everyone involved (wait for approval from Igor)
 -------
 backend
 -------
-- better dictionary
-- make sentence tree builder use MP as well (improve algorithm performance)
+- better dictionary (the dictionary should have approx. 50,000 words which will significantly reduce runtime)
+- add the torah/bible as available texts
 -------
 cloud
 -------
 - upload project to cloud
 - ci-cd?
+-------
+backlog
+-------
+- design a way to generate more texts for a text control group (should coordinate with Igor first)
+- the sheer volume of texts and found sentences might be overwhelming for the poor aws server, we might have to
+  find a big-data reliant solution to overcome this issue (or find an arabic solution instead).
+  one possible idea is to change run_find_all_MP and get_sentence_trees_MP to use multithreading instead,
+  and have an overarching process that spawns sub-processes for each instance of the sentence finder function.
+  further research about parallel computing may be necessary

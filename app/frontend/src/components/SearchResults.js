@@ -43,8 +43,13 @@ function SearchResults(props) {
     return (
         <div>
             <div className="card">
-                <div className="card-header">
-                    עמוד {currentPage}
+                <div className="card-header d-flex justify-content-between">
+                    <p className="m-0">
+                        עמוד {currentPage}
+                    </p>
+                    <p className="m-0">
+                        מציג {dataLimit} מתוך {props.data.length} תוצאות
+                    </p>
                 </div>
                 <div className="card-body">
                     <div className="dataContainer">
