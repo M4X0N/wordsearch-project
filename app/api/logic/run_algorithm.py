@@ -1,5 +1,5 @@
-from .find_word_indices import run_find_all_with_MP
-from .get_sentences import get_sentence_trees
+from .find_word_indices import run_find_all_MP
+from .get_sentences import run_get_sentence_trees_MP
 from .classes.secret_text import secret_text
 from .classes.lexicon import lexicon
 from datetime import datetime
@@ -25,7 +25,7 @@ def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=Tru
 		os.makedirs(os.path.dirname(found_word_path), exist_ok=True)
 
 		# run word searching algorithm	
-		indices_dict = run_find_all_with_MP(lexicon.words, text.text)
+		indices_dict = run_find_all_MP(lexicon.words, text.text)
 
 		with open(found_word_path, 'w', encoding='utf8') as output_file:
 			output_file.write(json.dumps(indices_dict, ensure_ascii=False))
@@ -42,7 +42,7 @@ def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=Tru
 	        word_lengths[index].append(len(word))
 
 	#running sentence extraction from index list 
-	all_sentence_trees = get_sentence_trees(word_lengths, text.text)
+	all_sentence_trees = run_get_sentence_trees_MP(word_lengths, text.text)
 
 	if save_results:
 		# append all sentences to one long list and remove all sentences with less than two words

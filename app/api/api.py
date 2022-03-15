@@ -123,14 +123,17 @@ def run_sentence_finder():
 		return "invalid letter offset", 422
 	if not valid_min_max_lengths(min_word_length, max_word_length):
 		return "invalid word length limits entered", 422
+	
+	# open text and lexicon
+	text = secret_text(text_name, int(letter_offset))
+	lex = lexicon(lexicon_name)
+
+	text_name = text_name.split('.')[0]
+	lexicon_name = lexicon_name.split('.')[0]
 
 	# check if checkpoint file already exists in output. If so, run algorithm from stage 1
 	checkpoint_filename = f'{text_name}-{lexicon_name}-{letter_offset}.txt'
 	stage = 1 if os.path.isfile(f'output/found-word-indices/{checkpoint_filename}') else 0
-
-	# open text and lexicon
-	text = secret_text(text_name, int(letter_offset))
-	lex = lexicon(lexicon_name)
 
 	# restrict lexicon word lengths
 	lex.set_word_limit(int(min_word_length), int(max_word_length))
