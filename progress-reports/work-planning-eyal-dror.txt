@@ -2,12 +2,14 @@ missions:
 --------
 frontend
 --------
-- add results pane to search page
 - maybe add sentence finder feedback? (messages such as sentence finder has finished running, didn't find any sentences etc.)
 -------
 backend
 -------
+- better dictionary
+- make sentence tree builder use MP as well (improve algorithm performance)
 -------
 cloud
 -------
 - upload project to cloud
+- ci-cd?

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Collapse, Modal } from 'bootstrap';
 import axios from 'axios';
 
 import '../css/Search.css';
@@ -6,12 +7,12 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import BasicSearch from './BasicSearch';
 import AdvancedSearch from './AdvancedSearch';
-import Loading from './Loading';
+import SearchResults from './SearchResults';
 import SearchContext from '../SearchContext';
-import { Collapse, Modal } from 'bootstrap';
 
 function Search() {
   const sentenceListRef = useRef([]);
+  const [searched, setSearched] = useState(false);
   const [advanced, setAdvanced] = useState(false);
   const [sentenceFileNames, setSentenceFileNames] = useState([]);
   const [fileSelection, setFileSelection] = useState('')
@@ -52,18 +53,27 @@ function Search() {
   }
 
   const matchAdvancedPattern = (formattedSentences) => {
-    return formattedSentences.filter((sentence) => {
-      if (sentence.length < searchData.advancedSearch.minWords || (sentence.reduce((a,b) => a+b.length,0)/sentence.length) < searchData.advancedSearch.avgWordLength) {
-        return false
+    const sentenceObjects = formattedSentences.filter((sentence) => {
+      if (sentence.length < searchData.advancedSearch.minWords ||
+         (sentence.reduce((a,b) => a+b.length,0)/sentence.length) < searchData.advancedSearch.avgWordLength) {
+        return false;
       }
       else {
         for (let i = 0; i < searchData.advancedSearch.words.length; i++) {
-          if (searchData.advancedSearch.words[i].word !== "" && sentence[i].word !== searchData.advancedSearch.words[i].word ||
-              searchData.advancedSearch.words[i].word === "" && searchData.advancedSearch.words[i].length !== sentence[i].length) {
-            return false
+          if ((searchData.advancedSearch.words[i].word !== "" && searchData.advancedSearch.words[i].word             !== sentence[i].word) ||
+              (searchData.advancedSearch.words[i].word === "" && parseInt(searchData.advancedSearch.words[i].length) !== sentence[i].length)) {
+            return false;
+          }
         }
+        return true;
       }
-        return true}})
+    });
+
+    return sentenceObjects.map((sentence) => {
+      return sentence.map((word) => {
+        return word.word;
+      }).join(' ');
+    })
   }
 
   const validateInput = () => {
@@ -95,15 +105,15 @@ function Search() {
   const search = async (event) => {
     event.preventDefault();
 
+    setFilteredSentences([]);
+
     if (!validateInput()) {
       setWasValidated(true);
       return;
     }
 
-    const modal = new Modal(document.getElementById("searchLoading"));
-    modal.show();
-
     setWasValidated(false);
+    setSearched(true);
 
     if(sentenceListRef.current.length === 0) {
       await loadSentences();
@@ -148,11 +158,14 @@ function Search() {
           <AdvancedSearch></AdvancedSearch>
           </div>
           <div className="d-flex justify-content-between">
-          <button type="submit" onClick={search} className="btn btn-success">חפש</button>
-          <button type="button" onClick={toggleAdvanced} id="collapseButton" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
+            <button type="submit" onClick={search} className="btn btn-success">חפש</button>
+            <button type="button" onClick={toggleAdvanced} id="collapseButton" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
           </div>
       </form>
-      <Loading message="החיפוש מתבצע כעת..." id="searchLoading"></Loading>
+      <div className="mt-3">
+        {!searched ? '' : 
+         filteredSentences.length !== 0 ? <SearchResults data={filteredSentences}></SearchResults> : "לא נמצאו תוצאות..." }
+      </div>
     </SearchContext.Provider>
   );
 }
