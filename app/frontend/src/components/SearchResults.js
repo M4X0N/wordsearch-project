@@ -10,6 +10,7 @@ function SearchResults(props) {
 
     useEffect(() => {
         setPages(Math.ceil(props.data.length / dataLimit));
+        setCurrentPage(1);
     }, [props.data])
 
     const goToNextPage = () => {

@@ -76,23 +76,16 @@ function AdvancedSearch() {
     const newData = {...searchData}
 
     switch (inputId) {
-      // don't know why negation is necessary here
       case "avgWordLengthCheckbox":
         document.getElementById("avgWordLength").disabled = newValue ? false : true;
-
-        if (newValue) {
-          newData.advancedSearch.avgWordLength = 0;
-          setSearchData(newData);
-        }
+        newData.advancedSearch.avgWordLength = '';
+        setSearchData(newData);
 
         break;
       case "minWordsCheckbox":
         document.getElementById("minWords").disabled = newValue ? false : true;
-
-        if (newValue) {
-          newData.advancedSearch.minWords = 0;
-          setSearchData(newData);
-        }
+        newData.advancedSearch.minWords = '';
+        setSearchData(newData);
 
         break;
       case "avgWordLength":
@@ -121,13 +114,13 @@ function AdvancedSearch() {
           <label htmlFor="avgWordLength">אורך מילה ממוצע</label>
           <div className="form-group input-group mb-3">
             <input value={searchData.advancedSearch.avgWordLength !== 0} onChange={handleParameterChange} id="avgWordLengthCheckbox" className="form-check form-check-input position-static me-3" type="checkbox"></input>
-            <input value={searchData.advancedSearch.avgWordLength} onChange={handleParameterChange} id="avgWordLength" className="form-control" type="number" placeholder="0" step="0.1" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
+            <input value={searchData.advancedSearch.avgWordLength} onChange={handleParameterChange} id="avgWordLength" className="form-control" type="number" placeholder="מספר" step="0.1" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
             <div className="invalid-feedback">אנא בחר מספר גדול מ-0</div>
           </div>
           <label htmlFor="minWords">כמות מילים מינימלית במשפט:</label>
           <div className="form-group input-group mb-3">
             <input value={searchData.advancedSearch.minWords !== 0} onChange={handleParameterChange} id="minWordsCheckbox" className="form-check form-check-input position-static me-3" type="checkbox"></input>
-            <input value={searchData.advancedSearch.minWords} onChange={handleParameterChange} id="minWords" className="form-control" type="number" placeholder="0" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
+            <input value={searchData.advancedSearch.minWords} onChange={handleParameterChange} id="minWords" className="form-control" type="number" placeholder="מספר" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
             <div className="invalid-feedback">אנא בחר מספר גדול מ-0</div>
           </div>
         </div>

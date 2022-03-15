@@ -14,7 +14,7 @@ function BasicSearch(props) {
   return (
     <div className="search collapse show mb-3" id="basicSearch" data-bs-parent="#accordion">
       <div className="input-group mb-3">
-        <input value={ searchData.basicSearch.phrase } onChange={changeSearch} type="text" placeholder="חפש כאן" className="form-control form-control-lg" id="basic-search-input" aria-describedby="searchHelp" required/>
+        <input value={ searchData.basicSearch.phrase } onChange={changeSearch} type="text" placeholder="חפש כאן" className="form-control form-control-lg" id="basic-search-input" aria-describedby="searchHelp"/>
         <div className="input-group-append">
           <button className="btn btn-lg btn-outline-secondary" type="button">
           <i className="bi bi-search"></i>

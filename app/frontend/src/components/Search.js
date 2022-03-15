@@ -52,24 +52,42 @@ function Search() {
     })
   }
 
-  const matchAdvancedPattern = (formattedSentences) => {
-    const sentenceObjects = formattedSentences.filter((sentence) => {
-      if (sentence.length < searchData.advancedSearch.minWords ||
-         (sentence.reduce((a,b) => a+b.length,0)/sentence.length) < searchData.advancedSearch.avgWordLength) {
-        return false;
-      }
-      else {
+  const isEmpty = (word) => {
+    return word.word === '' && word.length === '';
+  }
+
+  const advancedSearch = (formattedSentences) => {
+    let sentenceResults = formattedSentences;
+
+    console.log(searchData.advancedSearch);
+
+    if (searchData.advancedSearch.minWords !== '') {
+      sentenceResults = sentenceResults.filter((sentence) => {
+        return sentence.length >= searchData.advancedSearch.minWords;
+      })
+    }
+
+    if (searchData.advancedSearch.avgWordLength !== '') {
+      sentenceResults = sentenceResults.filter((sentence) => {
+        return (sentence.reduce((a, b) => a + b.length, 0) / sentence.length) >= searchData.advancedSearch.avgWordLength
+      })
+    }
+
+    if (!isEmpty(searchData.advancedSearch.words[0])) {
+      sentenceResults = sentenceResults.filter((sentence) => {
         for (let i = 0; i < searchData.advancedSearch.words.length; i++) {
           if ((searchData.advancedSearch.words[i].word !== "" && searchData.advancedSearch.words[i].word             !== sentence[i].word) ||
               (searchData.advancedSearch.words[i].word === "" && parseInt(searchData.advancedSearch.words[i].length) !== sentence[i].length)) {
             return false;
           }
         }
+  
         return true;
-      }
-    });
+      });
+    }
 
-    return sentenceObjects.map((sentence) => {
+
+    return sentenceResults.map((sentence) => {
       return sentence.map((word) => {
         return word.word;
       }).join(' ');
@@ -78,7 +96,7 @@ function Search() {
 
   const validateInput = () => {
     const validateNumber = (number) => {
-      return number !== '' && !isNaN(number) && parseInt(number) > 0
+      return number !== '' && !isNaN(number) && parseInt(number) > 0;
     }
 
     if (fileSelection === '') {
@@ -86,20 +104,28 @@ function Search() {
     }
 
     if (!advanced) {
-      return searchData.basicSearch.phrase !== '';
+      return true;
     }
+
+    const avgWordLength = document.getElementById("avgWordLength");
+    const minWords = document.getElementById("minWords");
     
-    if (!document.getElementById("avgWordLength").disabled && !validateNumber(searchData.advancedSearch.avgWordLength)) {
+    console.log(avgWordLength.disabled)
+    console.log(minWords.disabled)
+
+    if (!avgWordLength.disabled && !validateNumber(searchData.advancedSearch.avgWordLength)) {
       return false;
     }
     
-    if (!document.getElementById("minWords").disabled && !validateNumber(searchData.advancedSearch.minWords)) {
+    if (!minWords.disabled && !validateNumber(searchData.advancedSearch.minWords)) {
       return false;
     }
 
-    return searchData.advancedSearch.words.every((word) => {
-      return word.word !== '' || word.length !== ''
-    });
+    if (searchData.advancedSearch.words.length === 1 && isEmpty(searchData.advancedSearch.words[0])) {
+      return searchData.advancedSearch.avgWordLength !== '' || searchData.advancedSearch.minWords !== '';
+    }
+
+    return searchData.advancedSearch.words.every((word) => !isEmpty(word));
   }
 
   const search = async (event) => {
@@ -120,7 +146,7 @@ function Search() {
     }
 
     if (advanced) {
-      setFilteredSentences(matchAdvancedPattern(formatSentences(sentenceListRef.current)))
+      setFilteredSentences(advancedSearch(formatSentences(sentenceListRef.current)))
     } else {
       setFilteredSentences(sentenceListRef.current.filter((sentence) => {
         return sentence.includes(searchData.basicSearch.phrase)
