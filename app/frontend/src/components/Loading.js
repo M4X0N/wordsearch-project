@@ -1,6 +1,9 @@
 import '../css/Loading.css';
+import LanguageContext from "../contexts/LanguageContext";
+import { useContext } from "react";
 
 function Loading(props) {
+  const data = useContext(LanguageContext).data.loading
   return (
     <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
@@ -10,7 +13,7 @@ function Loading(props) {
                 </div>
                 <div className="modal-body text-center">
                     <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">{data}</span>
                     </div>
                 </div>
                 <div className="modal-footer border-0">

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import LanguageContext from "../contexts/LanguageContext"
 
 function FileUpload(props){
 	const [selectedFile, setSelectedFile] = useState({});
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
 	const [wasValidated, setWasValidated] = useState(false);
+	const data = useContext(LanguageContext).data.file_upload
 
 	const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
@@ -35,32 +37,32 @@ function FileUpload(props){
 		const files = new FormData()
 		files.append('file', selectedFile)
 
-		if (props.filePurpose === "לקסיקון") {
+		if (props.filePurpose === "לקסיקון" || props.filePurpose === "Lexicon") {
    			axios.post("/files/lexicons", files)
-		} else if (props.filePurpose === "טקסט") {
+		} else if (props.filePurpose === "טקסט" || props.filePurpose === "Text") {
 			axios.post("/files/texts", files)
 		}
 	}
 
 	return(
 	<form className={`mt-3 ${wasValidated ? 'was-validated' : ''}`} noValidate>
-		<p className="display-3 text-center">העלאת {props.filePurpose}</p>
+		<p className="display-3 text-center">{data.upload_title} {props.filePurpose}</p>
 		<div className="d-inline">
 			<input type="file" name="file" id="fileInput" className="form-control" accept={props.acceptedTypes} onChange={changeHandler} required/>
-			<div className="invalid-feedback">אנא בחר בקובץ שקיים על מחשבך עם אחת הסיומות שמתחת</div>
+			<div className="invalid-feedback">{data.invalid_feedback}</div>
 			{ isFilePicked ? (
 				<div className="display-6 p-1 d-inline" style={{ fontSize:20 }}>
-					<p>שם קובץ: {selectedFile.name}</p>
-					<p>סוג קובץ: {selectedFile.type}</p>
-					<p>גודל קובץ בבייטים: {selectedFile.size}</p>
+					<p>{data.file_name} {selectedFile.name}</p>
+					<p>{data.file_type} {selectedFile.type}</p>
+					<p>{data.file_size} {selectedFile.size}</p>
 				</div>
 			) : (
-				<p className='d-flex'>בחר קובץ עם אחת הסיומות הבאות:<p className="ms-1" dir="ltr">{props.acceptedTypes}</p></p>
+				<p className='d-flex'>{data.choose_file}<p className="ms-1" dir="ltr">{props.acceptedTypes}</p></p>
 			)}
 		</div>
 		<div>
-			<button type="submit" className="btn btn-success w-25 m-1" onClick={handleSubmission}>העלה</button>
-			<button type="reset" className="btn btn-danger w-25 m-1" onClick={cancelChoice}>נקה חיפוש</button>
+			<button type="submit" className="btn btn-success w-25 m-1" onClick={handleSubmission}>{data.upload}</button>
+			<button type="reset" className="btn btn-danger w-25 m-1" onClick={cancelChoice}>{data.clear_search}</button>
 		</div>
 	</form>
 	)

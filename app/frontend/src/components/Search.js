@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Collapse, Modal } from 'bootstrap';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
 
 import '../css/Search.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
-
+import { Modal, Collapse } from "bootstrap";
 import BasicSearch from './BasicSearch';
 import AdvancedSearch from './AdvancedSearch';
+import Loading from './Loading';
+import SearchContext from "../contexts/SearchContext";
 import SearchResults from './SearchResults';
-import SearchContext from '../SearchContext';
+import LanguageContext from "../contexts/LanguageContext"
 
 function Search() {
   const sentenceListRef = useRef([]);
-  const [searched, setSearched] = useState(false);
   const [advanced, setAdvanced] = useState(false);
   const [sentenceFileNames, setSentenceFileNames] = useState([]);
   const [fileSelection, setFileSelection] = useState('')
@@ -21,7 +21,8 @@ function Search() {
   const value = { searchData, setSearchData };
 
   const [wasValidated, setWasValidated] = useState(false);
-
+  const data = useContext(LanguageContext).data.search
+  const text_options = data.text_option_words
   useEffect(async () => {
     const sentenceFileNames = await axios.get('/files/sentences/names');
     setSentenceFileNames(sentenceFileNames.data.fileNames);
@@ -39,9 +40,9 @@ function Search() {
     setAdvanced(!advanced)
   }
 
-  const loadSentences = async () => {
-    const res = await axios.get(`/files/sentences/${fileSelection}`);
-    sentenceListRef.current = res.data;
+  const loadSentences = async (event) => {
+    const res = await axios.get(`/files/sentences/${fileSelection}`,);
+    sentenceListRef.current = res.data.split(',');
   }
 
   const formatSentences = (sentences) => {
@@ -52,51 +53,24 @@ function Search() {
     })
   }
 
-  const isEmpty = (word) => {
-    return word.word === '' && word.length === '';
-  }
-
-  const advancedSearch = (formattedSentences) => {
-    let sentenceResults = formattedSentences;
-
-    console.log(searchData.advancedSearch);
-
-    if (searchData.advancedSearch.minWords !== '') {
-      sentenceResults = sentenceResults.filter((sentence) => {
-        return sentence.length >= searchData.advancedSearch.minWords;
-      })
-    }
-
-    if (searchData.advancedSearch.avgWordLength !== '') {
-      sentenceResults = sentenceResults.filter((sentence) => {
-        return (sentence.reduce((a, b) => a + b.length, 0) / sentence.length) >= searchData.advancedSearch.avgWordLength
-      })
-    }
-
-    if (!isEmpty(searchData.advancedSearch.words[0])) {
-      sentenceResults = sentenceResults.filter((sentence) => {
+  const matchAdvancedPattern = (formattedSentences) => {
+    return formattedSentences.filter((sentence) => {
+      if (sentence.length < searchData.advancedSearch.minWords || (sentence.reduce((a,b) => a+b.length,0)/sentence.length) < searchData.advancedSearch.avgWordLength) {
+        return false
+      }
+      else {
         for (let i = 0; i < searchData.advancedSearch.words.length; i++) {
-          if ((searchData.advancedSearch.words[i].word !== "" && searchData.advancedSearch.words[i].word             !== sentence[i].word) ||
-              (searchData.advancedSearch.words[i].word === "" && parseInt(searchData.advancedSearch.words[i].length) !== sentence[i].length)) {
-            return false;
-          }
+          if (searchData.advancedSearch.words[i].word !== "" && sentence[i].word !== searchData.advancedSearch.words[i].word ||
+              searchData.advancedSearch.words[i].word === "" && searchData.advancedSearch.words[i].length !== sentence[i].length) {
+            return false
         }
-  
-        return true;
-      });
-    }
-
-
-    return sentenceResults.map((sentence) => {
-      return sentence.map((word) => {
-        return word.word;
-      }).join(' ');
-    })
+      }
+        return true}})
   }
 
   const validateInput = () => {
     const validateNumber = (number) => {
-      return number !== '' && !isNaN(number) && parseInt(number) > 0;
+      return number !== '' && !isNaN(number) && parseInt(number) > 0
     }
 
     if (fileSelection === '') {
@@ -104,49 +78,41 @@ function Search() {
     }
 
     if (!advanced) {
-      return true;
+      return searchData.basicSearch.phrase !== '';
     }
-
-    const avgWordLength = document.getElementById("avgWordLength");
-    const minWords = document.getElementById("minWords");
     
-    console.log(avgWordLength.disabled)
-    console.log(minWords.disabled)
-
-    if (!avgWordLength.disabled && !validateNumber(searchData.advancedSearch.avgWordLength)) {
+    if (!document.getElementById("avgWordLength").disabled && !validateNumber(searchData.advancedSearch.avgWordLength)) {
       return false;
     }
     
-    if (!minWords.disabled && !validateNumber(searchData.advancedSearch.minWords)) {
+    if (!document.getElementById("minWords").disabled && !validateNumber(searchData.advancedSearch.minWords)) {
       return false;
     }
 
-    if (searchData.advancedSearch.words.length === 1 && isEmpty(searchData.advancedSearch.words[0])) {
-      return searchData.advancedSearch.avgWordLength !== '' || searchData.advancedSearch.minWords !== '';
-    }
-
-    return searchData.advancedSearch.words.every((word) => !isEmpty(word));
+    return searchData.advancedSearch.words.every((word) => {
+      return word.word !== '' || word.length !== ''
+    });
   }
 
   const search = async (event) => {
     event.preventDefault();
-
-    setFilteredSentences([]);
 
     if (!validateInput()) {
       setWasValidated(true);
       return;
     }
 
+    const modal = new Modal(document.getElementById("searchLoading"));
+    modal.show();
+
     setWasValidated(false);
-    setSearched(true);
 
     if(sentenceListRef.current.length === 0) {
       await loadSentences();
     }
 
     if (advanced) {
-      setFilteredSentences(advancedSearch(formatSentences(sentenceListRef.current)))
+      setFilteredSentences(matchAdvancedPattern(formatSentences(sentenceListRef.current)))
     } else {
       setFilteredSentences(sentenceListRef.current.filter((sentence) => {
         return sentence.includes(searchData.basicSearch.phrase)
@@ -160,37 +126,36 @@ function Search() {
 
   return (
     <SearchContext.Provider value={value}>
-      <form className={`mt-3 ${wasValidated ? 'was-validated' : ''}`} noValidate>
-          <p className="display-3 text-center">חיפוש</p>
-          <div className="form-group col-6 mb-5 mx-auto text-center">
-            <label htmlFor="sentenceFileSelect">בחר טקסט לחיפוש משפטים: </label>
-            <select className="form-select" id="sentenceFileSelect" onChange={changeFileSelection} required>
-              <option value='' selected disabled hidden>בחר כאן</option>
-              {
-                sentenceFileNames.map((fileName, index) => {
-                  const data = fileName.replace(/\.[^/.]+$/, "").split('-');
-                  const text = data[0];
-                  const lexicon = data[1];
-                  const offset = data[2];
-
-                  return(<option value={fileName} key={text+lexicon+offset}>הטקסט {text} עם הלקסיקון {lexicon} בדילוג {offset} אותיות</option>);
-                })
-              }
-            </select>
-            <div className='invalid-feedback'>אנא בחר טקסט לחיפוש</div>
-          </div>
-          <div className="accordion" id="accordion">
-          <BasicSearch></BasicSearch>
-          <AdvancedSearch></AdvancedSearch>
-          </div>
-          <div className="d-flex justify-content-between">
-            <button type="submit" onClick={search} className="btn btn-success">חפש</button>
-            <button type="button" onClick={toggleAdvanced} id="collapseButton" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? "חיפוש בסיסי" : "חיפוש מתקדם"}</button>
-          </div>
-      </form>
       <div className="mt-3">
-        {!searched ? '' : 
-         filteredSentences.length !== 0 ? <SearchResults data={filteredSentences}></SearchResults> : "לא נמצאו תוצאות..." }
+          <form>
+              <p className="display-3 text-center">{data.search}</p>
+              <div className="form-group col-6 mb-5 mx-auto text-center">
+                <label htmlFor="sentenceFileSelect">{data.choose_text}</label>
+                <select className="form-control" id="sentenceFileSelect" onChange={changeFileSelection}>
+                  <option value='' selected disabled hidden>{data.choose_here}</option>
+                  {
+                    sentenceFileNames.map((fileName, index) => {
+                      const data = fileName.replace(/\.[^/.]+$/, "").split('-');
+                      const text = data[0];
+                      const lexicon = data[1];
+                      const offset = data[2];
+
+                      return(<option value={fileName} key={text+lexicon+offset}>{text_options[0]} {text} {text_options[1]}  {lexicon} {text_options[2]}  {offset} {text_options[3]} </option>);
+                    })
+                  }
+                </select>
+              </div>
+              <div className="accordion" id="accordion">
+              <BasicSearch></BasicSearch>
+              <AdvancedSearch></AdvancedSearch>
+              </div>
+              <div className="d-flex justify-content-between">
+              <button type="submit" onClick={search} className="btn btn-success" data-bs-toggle="modal" data-bs-target="#searchLoading">{data.submit}</button>
+              <button type="button" onClick={toggleAdvanced} data-bs-toggle="collapse" data-bs-target=".search" className={`btn ${advanced ? "btn-info" : "btn-danger"}`} aria-expanded="false" aria-controls="basicSearch advancedSearch">{advanced ? data.basic_search : data.advanced_search}</button>
+              </div>
+          </form>
+          <Loading message={data.loading_message} id="searchLoading"></Loading>
+         <SearchResults data={["asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd asdasd d asdasd ad sdfcz qascxa da","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd","asdasd"].sort((a,b) => b.length - a.length)}></SearchResults>
       </div>
     </SearchContext.Provider>
   );

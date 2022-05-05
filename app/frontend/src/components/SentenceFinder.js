@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
 import Loading from "./Loading";
 
@@ -7,17 +7,18 @@ import '../css/SentenceFinder.css';
 import axios from "axios";
 import { Modal } from "bootstrap";
 
+import LanguageContext from "../contexts/LanguageContext"
+
 function SentenceFinder(props) {
   const [textNames, setTextNames] = useState([]);
   const [lexiconNames, setLexiconNames] = useState([]);
-
   const [text, setText] = useState('');
   const [lexicon, setLexicon] = useState('');
   const [letterOffset, setLetterOffset] = useState('');
   const [minWordLength, setMinWordLength] = useState('');
   const [maxWordLength, setMaxWordLength] = useState('');
-
   const [wasValidated, setWasValidated] = useState(false);
+  const data = useContext(LanguageContext).data.sentence_finder
 
   useEffect(async () => {
     const textNames = await axios.get("/files/texts");
@@ -90,10 +91,10 @@ function SentenceFinder(props) {
     <div className="sentence-finder mt-3">
         <form className={`text-center ${wasValidated ? 'was-validated' : ''}`} noValidate>
             <div className="row mb-3">
-                <p className="display-3 text-center">מציאת משפטים</p>
+                <p className="display-3 text-center">{data.find_sentences}</p>
                 <div className="texts col-6 text-center">
                     <div className="row">
-                        <p className="display-5">טקסטים:</p>
+                        <p className="display-5">{data.texts}</p>
                     </div>
                     {
                         textNames.map((name, index) => {
@@ -110,7 +111,7 @@ function SentenceFinder(props) {
                 </div>
                 <div className="lexicons col-6 text-center">
                     <div className="row">
-                        <p className="display-5">מילונים:</p>
+                        <p className="display-5">{data.lexicons}</p>
                     </div>
                     {
                         lexiconNames.map((name, index) => {
@@ -127,24 +128,24 @@ function SentenceFinder(props) {
                 </div>
             </div>
             <div className="form-group mb-3 mx-auto col-4">
-                <label className="form-text mx-3" htmlFor="letterOffset">הזן מספר אותיות לדילוג:</label>
+                <label className="form-text mx-3" htmlFor="letterOffset">{data.letter_offset}</label>
                 <input value={letterOffset} onChange={changeLetterOffset} className="form-control" type="number" placeholder="0" id="letterOffset" required min="2"></input>
-                <div className="invalid-feedback">הזן מספר גדול מ-0</div>
+                <div className="invalid-feedback">{data.invalid_feedback_over_zero}</div>
             </div>
             <div className="row mb-3 d-flex justify-content-center">
                 <div className="col-2">
-                    <label className="form-text mx-3" htmlFor="minWordLength"><small>אורך מילה מינימלי במשפט:</small></label>
+                    <label className="form-text mx-3" htmlFor="minWordLength"><small>{data.min_word_length}</small></label>
                     <input value={minWordLength} onChange={changeMinWordLength} className="form-control" type="number" placeholder="0" id="minWordLength" required min="1"></input>
-                    <div className="invalid-feedback">הזן מספר גדול מ-0</div>
+                    <div className="invalid-feedback">{data.invalid_feedback_over_zero}</div>
                 </div>
                 <div className="col-2">
-                    <label className="form-text mx-3" htmlFor="maxWordLength"><small>אורך מילה מקסימלי במשפט:</small></label>
+                    <label className="form-text mx-3" htmlFor="maxWordLength"><small>{data.max_word_length}</small></label>
                     <input value={maxWordLength} onChange={changeMaxWordLength} className="form-control" type="number" placeholder="0" id="maxWordLength" required min="1"></input>
-                    <div className="invalid-feedback">הזן מספר גדול מהמינימום</div>
+                    <div className="invalid-feedback">{data.invalid_feedback_over_minimum}</div>
                 </div>
             </div>
-            <button onClick={runSentenceFinder} className="btn btn-primary" type="submit">מצא משפטים</button>
-            <Loading message="החיפוש מתבצע כעת... פעולה זו עלולה לקחת מספר דקות" id="sentenceFinderLoading"></Loading>
+            <button onClick={runSentenceFinder} className="btn btn-primary" type="submit">{data.submit}</button>
+            <Loading message={data.loading} id="sentenceFinderLoading"></Loading>
         </form>
     </div>
   );

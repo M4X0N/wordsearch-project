@@ -3,10 +3,13 @@ import { useContext } from "react";
 import '../css/AdvancedSearch.css';
 
 import WordItem from "./WordItem";
-import SearchContext from "../SearchContext";
+import SearchContext from "../contexts/SearchContext";
+import LanguageContext from "../contexts/LanguageContext";
+
 
 function AdvancedSearch() {
   const { searchData, setSearchData } = useContext(SearchContext);
+  const data = useContext(LanguageContext).data.advanced_search
 
   const focusOnLast = () => {
     const numOfWordItems = document.getElementsByClassName('word-item').length;
@@ -110,18 +113,18 @@ function AdvancedSearch() {
       }
       </div>
       <div className="search-parameters">
-        <p className="display-6">פרמטרים לחיפוש:</p>
-          <label htmlFor="avgWordLength">אורך מילה ממוצע</label>
+        <p className="display-6">{data.search_parameters}</p>
+          <label htmlFor="avgWordLength">{data.avg_length}</label>
           <div className="form-group input-group mb-3">
             <input value={searchData.advancedSearch.avgWordLength !== 0} onChange={handleParameterChange} id="avgWordLengthCheckbox" className="form-check form-check-input position-static me-3" type="checkbox"></input>
-            <input value={searchData.advancedSearch.avgWordLength} onChange={handleParameterChange} id="avgWordLength" className="form-control" type="number" placeholder="מספר" step="0.1" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
-            <div className="invalid-feedback">אנא בחר מספר גדול מ-0</div>
+            <input value={searchData.advancedSearch.avgWordLength} onChange={handleParameterChange} id="avgWordLength" className="form-control" type="number" placeholder={data.placeholder} step="0.1" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
+            <div className="invalid-feedback">{data.invalid_feedback}</div>
           </div>
-          <label htmlFor="minWords">כמות מילים מינימלית במשפט:</label>
+          <label htmlFor="minWords">{data.min_words}</label>
           <div className="form-group input-group mb-3">
             <input value={searchData.advancedSearch.minWords !== 0} onChange={handleParameterChange} id="minWordsCheckbox" className="form-check form-check-input position-static me-3" type="checkbox"></input>
-            <input value={searchData.advancedSearch.minWords} onChange={handleParameterChange} id="minWords" className="form-control" type="number" placeholder="מספר" min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
-            <div className="invalid-feedback">אנא בחר מספר גדול מ-0</div>
+            <input value={searchData.advancedSearch.minWords} onChange={handleParameterChange} id="minWords" className="form-control" type="number" placeholder={data.placeholder} min="1" disabled required={searchData.advancedSearch.avgWordLength !== ''}></input>
+            <div className="invalid-feedback">{data.invalid_feedback}</div>
           </div>
         </div>
     </div>

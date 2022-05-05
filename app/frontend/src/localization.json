@@ -1,0 +1,138 @@
+{
+    "hebrew" : {
+        "dir":"rtl",
+        "advanced_search": {
+            "search_parameters":"פרמטרים לחיפוש",
+            "avg_length":"אורך מילה ממוצע",
+            "invalid_feedback":"אנא בחר מספר גדול מ-0",
+            "min_words":"כמות מילים מינימלית במשפט:",
+            "placeholder":"מספר"
+        },
+        "app": {
+            "lexicon_keyword":"לקסיקון",
+            "text_keyword":"טקסט"
+        },
+        "basic_search": {
+            "search_here":"חפש כאן",
+            "invalid_feedback":"אנא הזן ביטוי לחיפוש",
+            "search_help":"הזן מילה ונמצא עבורך את המשפטים שהיא מופיעה בה"
+        },
+        "file_upload": {
+            "upload_title":"העלאת",
+            "invalid_feedback":"אנא בחר בקובץ שקיים על מחשבך עם אחת הסיומות שמתחת",
+            "file_name":"שם הקובץ: ",
+            "file_type":"סוג הקובץ: ",
+            "file_size":"גודל הקובץ בבייטים: ",
+            "choose_file":"בחר קובץ עם אחת הסיומות הבאות:",
+            "upload":"העלה",
+            "clear_search":"נקה חיפוש"
+        },
+        "loading": "טוען...",
+        "navbar": {
+            "sentence_finder": "מצא משפטים ",
+            "search_text": "חפש בטקסט קיים",
+            "text_upload":"העלה טקסט",
+            "lexicon_upload":"העלה לקסיקון"
+        },
+        "search": {
+            "search":"חיפוש",
+            "choose_text":"בחר טקסט לחיפוש משפטים: ",
+            "choose_here":"בחר כאן",
+            "text_option_words":["הטקסט","עם הלקסיקון","בדילוג","אותיות"],
+            "basic_search":"חיפוש בסיסי",
+            "advanced_search":"חיפוש מתקדם",
+            "submit":"חפש",
+            "loading_message":"החיפוש מתבצע כעת..."
+        },
+        "search_results": {
+            "page":"עמוד",
+            "showing_x_from_results": ["מציג","מתוך","תוצאות"],
+            "previous":"הקודם",
+            "next":"הבא"
+        },
+        "sentence_finder": {
+            "find_sentences":"מציאת משפטים",
+            "texts":"טקסטים: ",
+            "lexicons":"מילונים",
+            "letter_offset":"הזן מספר אותיות לדילוג:",
+            "invalid_feedback_over_zero":"הזן מספר גדול מ-0",
+            "min_word_length":"אורך מילה מינימלי במשפט: ",
+            "max_word_length":"אורך מילה מקסימלי במשפט:",
+            "invalid_feedback_over_minimum":"הזן מספר גדול מהמינימום",
+            "submit":"מצא משפטים",
+            "loading":"החיפוש מתבצע כעת... פעולה זו עלולה לקחת מספר דקות"
+        },
+        "word_item": {
+            "input_word":"הזן מילה",
+            "input_word_length":"הזן אורך מילה"
+        }
+    },
+    "english" : {
+        "dir":"ltr",
+        "advanced_search": {
+            "search_parameters":"Search parameters",
+            "avg_length":"Average word length",
+            "invalid_feedback":"Please choose a number larger than zero",
+            "min_words":"Minimal word count in a sentence",
+            "placeholder":"Number"
+        },
+        "app": {
+            "lexicon_keyword":"lexicon",
+            "text_keyword":"text"
+        },
+        "basic_search": {
+            "search_here":"Search here",
+            "invalid_feedback":"Please enter a phrase to search",
+            "search_help":"Enter a phrase and find all sentences it appears in"
+        },
+        "file_upload": {
+            "upload_title":"Upload",
+            "invalid_feedback":"Please choose a file with one of the following extensions:",
+            "file_name":"File name: ",
+            "file_type":"File type: ",
+            "file_size":"File size in bytes: ",
+            "choose_file":"Choose a file with the folliwng extensions:",
+            "upload":"Upload",
+            "clear_search":"Clean search"
+        },
+        "loading": "Loading...",
+        "navbar": {
+            "sentence_finder": "Find sentences",
+            "search_text": "Search in an existing text",
+            "text_upload":"Upload text",
+            "lexicon_upload":"Upload lexicon"
+        },
+        "search": {
+            "search":"Search",
+            "choose_text":"Choose text for sentence finding",
+            "choose_here":"Choose here",
+            "text_option_words":["Text","with lexicon","offset","letters"],
+            "basic_search":"Basic search",
+            "submit":"Search",
+            "advanced_search":"Advanced search",
+            "loading_message":"The sentence finding is in place..."
+        },
+        "search_results": {
+            "page":"Page",
+            "showing_x_from_results": ["Showing","Out of","Results"],
+            "previous":"Previous",
+            "next":"Next"
+        },
+        "sentence_finder": {
+            "find_sentences":"Find sentences",
+            "texts":"Texts: ",
+            "lexicons":"Lexicons",
+            "letter_offset":"Please enter a letter offset:",
+            "invalid_feedback_over_zero":"Please enter a number larger than zero",
+            "min_word_length":"Minimal word length:",
+            "max_word_length":"Maximum word length:",
+            "invalid_feedback_over_minimum":"Please enter a number larger than the minimum",
+            "submit":"Find sentences",
+            "loading":"The search is in place, this action may take a few minutes to complete..."
+        },
+        "word_item": {
+            "input_word":"Enter a word",
+            "input_word_length":"Enter a word length"
+        }
+    }
+}
