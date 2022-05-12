@@ -42,7 +42,7 @@
             "basic_search":"חיפוש בסיסי",
             "advanced_search":"חיפוש מתקדם",
             "submit":"חפש",
-            "loading_message":"החיפוש מתבצע כעת..."
+            "no_results": "לא נמצאו תוצאות..."
         },
         "search_results": {
             "page":"עמוד",
@@ -110,7 +110,7 @@
             "basic_search":"Basic search",
             "submit":"Search",
             "advanced_search":"Advanced search",
-            "loading_message":"The sentence finding is in place..."
+            "no_results":"No results found..."
         },
         "search_results": {
             "page":"Page",
