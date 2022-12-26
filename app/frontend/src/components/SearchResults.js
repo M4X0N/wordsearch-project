@@ -50,7 +50,7 @@ function SearchResults(props) {
                         {data.page} {currentPage}
                     </p>
                     <p className="m-0">
-                        {showing_x_from_results[0]} {dataLimit} {showing_x_from_results[1]} {props.data.length} {showing_x_from_results[2]}
+                        {showing_x_from_results[0]} { dataLimit > props.data.length ? props.data.length : dataLimit } {showing_x_from_results[1]} {props.data.length} {showing_x_from_results[2]}
                     </p>
                 </div>
                 <div className="card-body">
