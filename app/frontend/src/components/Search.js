@@ -61,8 +61,6 @@ function Search() {
   const advancedSearch = (formattedSentences) => {
     let sentenceResults = formattedSentences;
 
-    console.log(searchData.advancedSearch);
-
     if (searchData.advancedSearch.minWords !== '') {
       sentenceResults = sentenceResults.filter((sentence) => {
         return sentence.length >= searchData.advancedSearch.minWords;
@@ -79,7 +77,7 @@ function Search() {
       sentenceResults = sentenceResults.filter((sentence) => {
         for (let i = 0; i < searchData.advancedSearch.words.length; i++) {
           if (searchData.advancedSearch.words[i].word !== "" && sentence[i].word !== searchData.advancedSearch.words[i].word ||
-              searchData.advancedSearch.words[i].word === "" && searchData.advancedSearch.words[i].length !== sentence[i].length) {
+              searchData.advancedSearch.words[i].word === "" && parseInt(searchData.advancedSearch.words[i].length) !== sentence[i].length) {
             return false
           }
         }
