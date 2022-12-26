@@ -37,9 +37,9 @@ function FileUpload(props){
 		const files = new FormData()
 		files.append('file', selectedFile)
 
-		if (props.filePurpose === "לקסיקון" || props.filePurpose === "Lexicon") {
+		if (props.filePurpose === "לקסיקון" || props.filePurpose === "lexicon") {
    			axios.post("/files/lexicons", files)
-		} else if (props.filePurpose === "טקסט" || props.filePurpose === "Text") {
+		} else if (props.filePurpose === "טקסט" || props.filePurpose === "text") {
 			axios.post("/files/texts", files)
 		}
 	}
