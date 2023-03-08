@@ -12,17 +12,6 @@ class secret_text():
         self.divide_by_letter_offset(letter_offset)
         self.name = path.split(".")[0]
 
-        print("DEBUG MARKER")
-        print(self.text)
-        print("DEBUG MARKER")
-#       i = 0
-#       for char in self.text:
-#           print(char,end="")
-#           i += 1
-#           if i == letter_offset:
-#               i = 0
-#               print()
-
     #file readers
     def read_docx(self, file):
         from docx import Document
