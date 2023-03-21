@@ -1,0 +1,28 @@
+---
+- name: wordsearch installation with dependencies
+  hosts:
+    wps_test
+  become: yes
+
+
+  tasks:
+  - name: install dependencies
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - python3
+      - python3-devel
+      - nodejs
+      - gcc
+      - gcc-c++
+
+  - name: make app directory
+    file:
+      path: /var/app
+      state: directory
+
+  - name: copy app to server
+    synchronize:
+      src: ../app
+      dest: /var/app

@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:3000"
+    networks:
+      - backbone
+    environment:
+      - API_ADDR: http://backend:5000/
+
+  backend:
+    build: ./api
+    ports:
+      - "5000:5000"
+    networks:
+      - backbone
+
+networks:
+  backbone: {}
