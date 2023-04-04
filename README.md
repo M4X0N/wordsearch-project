@@ -26,3 +26,9 @@ for backend:
 flask
 cors
 python-docx
+
+## TODO
+* Make frontend run. There is a problem with dependencies
+* Reorganize repo: frontend and backend folders on root. Progress reports format
+* Docker: container repo.
+* Ansible: install dependencies, run docker-compose
