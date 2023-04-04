@@ -8,7 +8,7 @@ import os
 from os import walk
 
 api = Flask(__name__)
-CORS(api, origins="http://localhost:80")
+CORS(api, origins="http://localhost:3000")
 # TODO: port number. It's from another container!
 
 def allowed_text_file_type(filename):

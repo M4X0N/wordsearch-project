@@ -11,6 +11,7 @@ services:
       - API_ADDR=http://backend:5000
 
   backend:
+    hostname: backend
     build: ./api
     ports:
       - "5000:5000"
