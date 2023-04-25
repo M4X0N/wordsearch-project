@@ -28,7 +28,7 @@ cors
 python-docx
 
 ## TODO
-* Make frontend run. There is a problem with dependencies
+* Add env variable to frontend for api address
 * Reorganize repo: frontend and backend folders on root. Progress reports format
 * Docker: container repo.
 * Ansible: install dependencies, run docker-compose
