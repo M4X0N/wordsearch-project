@@ -29,6 +29,6 @@ python-docx
 
 ## TODO
 * Add env variable to frontend for api address
+* **VITAL** k8s? If it can make our life easier
 * Reorganize repo: frontend and backend folders on root. Progress reports format
 * Docker: container repo.
-* Ansible: install dependencies, run docker-compose
