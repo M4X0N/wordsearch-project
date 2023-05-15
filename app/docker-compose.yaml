@@ -6,7 +6,7 @@ services:
     ports:
       - "80:3000"
     networks:
-      - backbone
+      - backend
     environment:
       - API_ADDR=http://backend:5000
 
@@ -16,7 +16,8 @@ services:
     ports:
       - "5000:5000"
     networks:
-      - backbone
+      - backend
 
 networks:
-  backbone: {}
+  backend:
+    driver: bridge

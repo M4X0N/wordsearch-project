@@ -22,9 +22,8 @@ def allowed_lexicon_file_type(filename):
 def valid_letter_offset(letter_offset):
     if not letter_offset.isnumeric():
         return False
-    
-    return int(letter_offset) > 0
 
+    return int(letter_offset) > 0
 def valid_min_max_lengths(min, max):
     if not min.isnumeric() or not max.isnumeric():
         return False
@@ -58,6 +57,8 @@ def upload_text():
     os.makedirs(os.path.dirname('uploaded-texts/'), exist_ok=True)
     
     file.save(os.path.join(api.config['TEXTS_FOLDER'], file.filename))
+    ### TODO DEBUG
+    print("DEBUGMARKER")
     return "the file was successfully saved", 201
 
 @api.route('/files/texts', methods=["GET"])
