@@ -1,0 +1,5 @@
+all:
+  hosts:
+    localhost:
+      ssh_port: 60022
+      http_port: 60080
