@@ -1,28 +1,19 @@
 ---
 - name: wordsearch installation with dependencies
   hosts:
-    wps_test
+    all
   become: yes
 
 
   tasks:
-  - name: install dependencies
+  - name: set ssh port
+    set_fact:
+      ansible_port: '{{ ssh_portllll }}'
+
+  - name: install k3s
     package:
       name: "{{ item }}"
       state: present
     loop:
-      - python3
-      - python3-devel
-      - nodejs
-      - gcc
-      - gcc-c++
+      - k3s
 
-  - name: make app directory
-    file:
-      path: /var/app
-      state: directory
-
-  - name: copy app to server
-    synchronize:
-      src: ../app
-      dest: /var/app
