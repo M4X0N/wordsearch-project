@@ -8,7 +8,7 @@ import os
 from os import walk
 
 api = Flask(__name__)
-CORS(api, origins="http://localhost:3000")
+# CORS(api, origins="http://localhost:3000")
 # TODO: port number. It's from another container!
 
 def allowed_text_file_type(filename):
@@ -143,3 +143,8 @@ def run_sentence_finder():
     run_algorithm(text, lex, letter_offset=int(letter_offset), from_stage=stage, save_results=True)
 
     return "the file was successfully processed and saved by the server", 201
+
+# healthcheck
+@api.route('/', methods=["GET"])
+def health_check():
+    return('', 204)
