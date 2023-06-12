@@ -10,7 +10,9 @@ import FileUpload from "./FileUpload";
 import Navbar from "./Navbar";
 import LanguageContext from "../contexts/LanguageContext";
 const localization = require('../localization.json')
-axios.defaults.baseURL = `http://localhost:5000`;
+// axios.defaults.baseURL = `http://localhost:5000`;
+// axios.defaults.baseURL = `http://localhost:5000`; 
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL; // Containerized should work
 
 function App() {
   // const data = useContext(LanguageContext).data.app
