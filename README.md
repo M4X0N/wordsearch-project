@@ -27,7 +27,14 @@ flask
 cors
 python-docx
 
-## TODO
+## What TODO with ansible:
+- install python, pip, npm
+- pip3 install -r requirements.txt for api
+- npm install for frontend
+- RUN APP!!
+
+
+## old TODO
 * Add env variable to frontend for api address
 * **VITAL** k8s? If it can make our life easier
 * Reorganize repo: frontend and backend folders on root. Progress reports format

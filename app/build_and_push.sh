@@ -11,5 +11,5 @@ fi
 docker build api -t wordsearchproject/backend:$TAG
 docker push wordsearchproject/backend:$TAG
 
-docker build api -t wordsearchproject/frontend:$TAG
+docker build frontend -t wordsearchproject/frontend:$TAG
 docker push wordsearchproject/frontend:$TAG

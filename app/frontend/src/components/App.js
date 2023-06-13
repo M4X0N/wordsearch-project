@@ -10,8 +10,8 @@ import FileUpload from "./FileUpload";
 import Navbar from "./Navbar";
 import LanguageContext from "../contexts/LanguageContext";
 const localization = require('../localization.json')
-//axios.defaults.baseURL = `http://localhost:5000`; 
-axios.defaults.baseURL = `http://backend:5000`; // Containerized should work
+axios.defaults.baseURL = `http://localhost:5000`; 
+//axios.defaults.baseURL = `http://backend`; // Containerized should work
 
 
 function App() {
