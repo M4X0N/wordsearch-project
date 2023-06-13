@@ -6,7 +6,6 @@ from logic.classes.secret_text import secret_text
 
 import os
 from os import walk
-
 api = Flask(__name__)
 # CORS(api, origins="http://localhost:3000")
 # TODO: port number. It's from another container!
