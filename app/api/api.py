@@ -8,7 +8,8 @@ import os
 from os import walk
 
 api = Flask(__name__)
-CORS(api, origins="http://localhost:3000")
+# CORS(api, origins="http://localhost:3000")
+CORS(api)
 
 def allowed_text_file_type(filename):
 	ALLOWED_TEXT_FILE_TYPES = ['txt', 'docx']
