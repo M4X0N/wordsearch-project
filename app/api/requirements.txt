@@ -1,0 +1,4 @@
+flask
+cors
+flask_cors
+python-docx

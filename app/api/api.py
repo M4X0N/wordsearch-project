@@ -8,7 +8,7 @@ import os
 from os import walk
 
 api = Flask(__name__)
-CORS(api, origins="http://localhost:3000")
+CORS(api)
 
 def allowed_text_file_type(filename):
 	ALLOWED_TEXT_FILE_TYPES = ['txt', 'docx']
@@ -45,7 +45,7 @@ def validate_file(request_files):
 	return "good", 200
 
 # update files to be saved on cloud instead of locally
-@api.route("/files/texts", methods=["POST"])
+@api.route("/api/files/texts", methods=["POST"])
 def upload_text():	
 	result, status = validate_file(request.files)
 
@@ -54,19 +54,18 @@ def upload_text():
 
 	file = request.files['file']
 
-	os.makedirs(os.path.dirname('uploaded-texts/'), exist_ok=True)
-	
+	os.makedirs(api.config['TEXTS_FOLDER'], exist_ok=True)
 	file.save(os.path.join(api.config['TEXTS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
-@api.route('/files/texts', methods=["GET"])
+@api.route('/api/files/texts', methods=["GET"])
 def get_text_names():
-	texts_dir = 'uploaded-texts'
+	texts_dir = api.config['TEXTS_FOLDER']
 	filenames = next(walk(texts_dir), (None, None, []))[2]
 
 	return {'fileNames': filenames}, 200
 	
-@api.route("/files/lexicons", methods=["POST"])
+@api.route("/api/files/lexicons", methods=["POST"])
 def upload_lexicon():	
 	result, status = validate_file(request.files)
 
@@ -75,31 +74,31 @@ def upload_lexicon():
 
 	file = request.files['file']
 
-	os.makedirs(os.path.dirname('uploaded-lexicons/'), exist_ok=True)
+	os.makedirs(api.config['LEXICONS_FOLDER'], exist_ok=True)
 
 	file.save(os.path.join(api.config['LEXICONS_FOLDER'], file.filename))
 	return "the file was successfully saved", 201
 
-@api.route('/files/lexicons', methods=["GET"])
+@api.route('/api/files/lexicons', methods=["GET"])
 def get_lexicon_names():
-	lexicons_dir = 'uploaded-lexicons'
+	lexicons_dir = api.config['LEXICONS_FOLDER']
 	filenames = next(walk(lexicons_dir), (None, None, []))[2]
 
 	return {'fileNames': filenames}, 200
 
-@api.route('/files/sentences/names', methods=["GET"])
+@api.route('/api/files/sentences/names', methods=["GET"])
 def get_sentence_file_names():
-	sentences_dir = 'output/sentences'
+	sentences_dir = api.config['SENTENCES_FOLDER']
 	filenames = next(walk(sentences_dir), (None, None, []))[2]
 
 	return {'fileNames': filenames}, 200
 
-@api.route('/files/sentences/<path:filename>', methods=["GET"])
+@api.route('/api/files/sentences/<path:filename>', methods=["GET"])
 def get_sentence_file(filename):
 	if len(filename) == 0:
 		return "file name must be non empty", 400
 
-	sentences_dir = os.path.normpath('output/sentences')
+	sentences_dir = os.path.normpath(api.config['SENTENCES_FOLDER'])
 	file_path = os.path.join(sentences_dir, filename)
 
 	if not os.path.isfile(file_path):
@@ -109,7 +108,7 @@ def get_sentence_file(filename):
 		return f.read(), 200
 
 
-@api.route('/sentence-finder', methods=["POST"])
+@api.route('/api/sentence-finder', methods=["POST"])
 def run_sentence_finder():
 	text_name       = request.json['text_name']
 	lexicon_name    = request.json['lexicon_name']
@@ -133,11 +132,11 @@ def run_sentence_finder():
 
 	# check if checkpoint file already exists in output. If so, run algorithm from stage 1
 	checkpoint_filename = f'{text_name}-{lexicon_name}-{letter_offset}.txt'
-	stage = 1 if os.path.isfile(f'output/found-word-indices/{checkpoint_filename}') else 0
+	stage = 1 if os.path.isfile(os.path.join(api.config['WORDS_FOLDER'], checkpoint_filename)) else 0
 
 	# restrict lexicon word lengths
 	lex.set_word_limit(int(min_word_length), int(max_word_length))
 
-	run_algorithm(text, lex, letter_offset=int(letter_offset), from_stage=stage, save_results=True)
+	run_algorithm(api, text, lex, letter_offset=int(letter_offset), from_stage=stage, save_results=True)
 
 	return "the file was successfully processed and saved by the server", 201

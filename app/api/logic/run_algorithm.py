@@ -7,7 +7,7 @@ from functools import reduce
 import json
 import os
 
-def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=True):
+def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_results=True):
     '''
     execute the main algorithm.
     text is the text to find sentences from.
@@ -19,10 +19,9 @@ def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=Tru
     '''
 
     # "output/found-word-indices/{text.name}-{lexicon.name}.txt" is appended to the cwd the script is run from
-    found_word_path = f'output/found-word-indices/{text.name}-{lexicon.name}-{letter_offset}.txt'
-
+    os.makedirs(api.config['WORDS_FOLDER'], exist_ok=True)
+    found_word_path = os.path.join(api.config['WORDS_FOLDER'], f"{text.name}-{lexicon.name}-{letter_offset}.txt")
     if from_stage == 0:
-        os.makedirs(os.path.dirname(found_word_path), exist_ok=True)
 
         # run word searching algorithm  
         indices_dict = run_find_all_MP(lexicon.words, text.text)
@@ -48,8 +47,10 @@ def run_algorithm(text, lexicon, letter_offset=2, from_stage=0, save_results=Tru
         # append all sentences to one long list and remove all sentences with less than two words
         all_sentences = list(filter(lambda sentence: len(sentence.split(' ')) > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees), [])))
 
-        save_sentences_path = f'output/sentences/{text.name}-{lexicon.name}-{letter_offset}.txt'
-        os.makedirs(os.path.dirname(save_sentences_path), exist_ok=True)
+        save_sentences_path = os.path.join(os.path.normpath(api.config['SENTENCES_FOLDER']), f"{text.name}-{lexicon.name}-{letter_offset}.txt")
+        print("DEBUG")
+        print(f"{save_sentences_path}")
+        os.makedirs(api.config['SENTENCES_FOLDER'], exist_ok=True)
 
         with open(save_sentences_path, 'w', encoding='utf8') as save_file:
             save_file.write(json.dumps(all_sentences, ensure_ascii=False))
