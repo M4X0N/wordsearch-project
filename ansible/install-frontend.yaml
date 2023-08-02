@@ -1,0 +1,15 @@
+---
+- name: build and install files of frontend
+  hosts: wsp
+  become: true
+
+  tasks:
+  - name: npm build
+    shell: >
+      npm run build --prefix ../app/frontend
+    delegate_to: localhost
+
+  - name: copy to server
+    copy:
+      src: ../app/frontend/build/
+      dest: /var/www/html/wordsearch
