@@ -4,10 +4,10 @@ class secret_text():
     '''
     helper class used to process text into N-skip strings
     '''
-    def __init__(self, path, letter_offset=2):
+    def __init__(self, api, path, letter_offset=2):
         file_extension = path.split('.')[1]
         # "uploaded_texts/{path}" path is appended to the cwd the script is run from
-        self.text = getattr(self, f"read_{file_extension}")(f'uploaded-texts/{path}')
+        self.text = getattr(self, f"read_{file_extension}")(f"{api.config['TEXTS_FOLDER']}/{path}")
         self.clean_text()
         self.divide_by_letter_offset(letter_offset)
         self.name = path.split(".")[0]

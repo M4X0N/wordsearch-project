@@ -2,10 +2,10 @@ class lexicon():
 	'''
 	used to scan a lexicon from file
 	'''
-	def __init__(self, path, delim=";"):
+	def __init__(self, api, path, delim=";"):
 		self.delimiter = delim
 		# "uploaded_texts/{path}" path is appended to the cwd the script is run from
-		self.words = self.read_lexicon(f'uploaded-lexicons/{path}')
+		self.words = self.read_lexicon(f"{api.config['LEXICONS_FOLDER']}/{path}")
 		self.name = path.split('.')[0]
 
 	def read_lexicon(self, path):
