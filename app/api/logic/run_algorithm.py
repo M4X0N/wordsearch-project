@@ -48,13 +48,12 @@ def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_result
         all_sentences = list(filter(lambda sentence: len(sentence.split(' ')) > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees), [])))
 
         save_sentences_path = os.path.join(os.path.normpath(api.config['SENTENCES_FOLDER']), f"{text.name}-{lexicon.name}-{letter_offset}.txt")
-        print("DEBUG")
-        print(f"{save_sentences_path}")
         os.makedirs(api.config['SENTENCES_FOLDER'], exist_ok=True)
 
         with open(save_sentences_path, 'w', encoding='utf8') as save_file:
             save_file.write(json.dumps(all_sentences, ensure_ascii=False))
 
+    print("DEBUG: algorithm finished")
     return all_sentences
 
 # usage example

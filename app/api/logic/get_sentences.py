@@ -33,7 +33,6 @@ def get_sentence_trees(word_lengths, text, indices):
 
 		except IndexError as e:
 			pass
-			# print(char_index)
 
 		return nodes
 

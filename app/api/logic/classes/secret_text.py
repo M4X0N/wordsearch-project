@@ -12,9 +12,7 @@ class secret_text():
         self.divide_by_letter_offset(letter_offset)
         self.name = path.split(".")[0]
 
-        print("DEBUG MARKER")
-        print(self.text)
-        print("DEBUG MARKER")
+        print("DEBUG: secret_text init")
 #       i = 0
 #       for char in self.text:
 #           print(char,end="")
