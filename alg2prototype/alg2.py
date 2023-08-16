@@ -7,10 +7,11 @@ import pandas as pd
 DB_NAME = "results.db"
 TEXT_NAME = "nztest.txt"
 # TEXT_NAME = "torah.txt"
-# TEXT_NAME = "bereshit-36.txt"
+TEXT_NAME = "bereshit-36.txt"
 DICT_NAME = "testdict.txt"
 
-STEP = -4
+# STEP = -4
+STEP = 4
 
 letters = list("קראטוןםפשדגכעיחלךףזסבהנמצתץ")
 sofit_translation = {
@@ -46,20 +47,21 @@ df.replace(sofit_translation, inplace=True)
 df.reset_index(inplace=True)
 # df.reset_index(inplace=True)
 
+offset = STEP
 
-print(df)
-if STEP < 0:
-    STEP *= -1
+if offset < 0:
+    step = -offset
     df = df.iloc[::-1]
     df.reset_index(inplace=True, drop=True)
+else:
+    step = offset
 
 df['clean index'] = df.index
-print(df)
 
 words = []
 slices = []
-for slice_index in range(STEP):
-    slice = df[(df.index - slice_index) % STEP == 0]
+for slice_index in range(step):
+    slice = df[(df.index - slice_index) % step == 0]
     slice.reset_index(inplace=True)
     slice_str = slice['char'].str.cat()
 
@@ -79,23 +81,50 @@ for slice_index in range(STEP):
 words = pd.DataFrame(data=words)
 # print(words.sort_values(by=['source start']))
 # words.sort_values(by=['slice start'], inplace=True)
-
-# sentences = []
-# for slice_index in range(words.slice.max()+1):
-#     prev_end = None
-#     sentence = []
-#     slice = words[words['slice'] == slice_index]
-#     for index, row in slice.iterrows():
-#         print("WORD:")
-#         print(row)
-#         next_word = slice[slice['slice start'] == row['slice end']]
-#         if not next_word.empty:
-#             print("NEXT WORD:")
-#             print(next_word)
-#
-# TODO: как мне блин собрать слова в предложения?
-
 print(words)
-# print(sentences)
-# sentences = pd.DataFrame(data=sentences)
-exit(0)
+
+sentences_global = []
+for slice_index in range(words.slice.min(), words.slice.max()+1):
+    print(f"SLICE {slice_index}")
+    slice = words[words['slice'] == slice_index]
+    print(slice)
+    sentences = []
+    for w_index, row in slice.iterrows():
+        next_words = words[words['slice start'] == row['slice end']]
+
+        if not next_words.empty:
+            for nw_index, word in next_words.iterrows():
+                sentences.append([w_index] + [nw_index])
+
+    print(sentences)
+    changed = True
+    while changed:
+        changed = False
+        sentences_new = []
+        for s in sentences:
+            for sn in sentences:
+                if s[-1] == sn[0]:
+                    changed = True
+                    sentences_new.append(s+sn[1:])
+
+        if changed:
+            sentences = sentences_new
+    sentences_global += sentences
+
+sentence_data = []
+for s in sentences_global:
+    sentence = ""
+    for wi in s:
+        row = words.iloc[wi]
+        sentence = ' '.join([sentence, row['word']])
+
+    row_dict = {
+        'sentence':     sentence,
+        'clean start':  words['clean start'][s[0]],
+        'source start': words['source start'][s[0]],
+        'offset':       offset
+    }
+    sentence_data.append(row_dict)
+
+sdf = pd.DataFrame(data=sentence_data)
+print(sdf)

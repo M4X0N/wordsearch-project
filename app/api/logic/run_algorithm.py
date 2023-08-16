@@ -1,11 +1,12 @@
-from .find_word_indices import run_find_all_MP
-from .get_sentences import run_get_sentence_trees_MP
-from .classes.secret_text import secret_text
-from .classes.lexicon import lexicon
-from datetime import datetime
-from functools import reduce
 import json
 import os
+from functools import reduce
+
+from .classes.lexicon import lexicon
+from .classes.secret_text import secret_text
+from .find_word_indices import run_find_all_MP
+from .get_sentences import run_get_sentence_trees_MP
+
 
 def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_results=True):
     '''
@@ -20,10 +21,11 @@ def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_result
 
     # "output/found-word-indices/{text.name}-{lexicon.name}.txt" is appended to the cwd the script is run from
     os.makedirs(api.config['WORDS_FOLDER'], exist_ok=True)
-    found_word_path = os.path.join(api.config['WORDS_FOLDER'], f"{text.name}-{lexicon.name}-{letter_offset}.txt")
+    found_word_path = os.path.join(
+        api.config['WORDS_FOLDER'], f"{text.name}-{lexicon.name}-{letter_offset}.txt")
     if from_stage == 0:
 
-        # run word searching algorithm  
+        # run word searching algorithm
         indices_dict = run_find_all_MP(lexicon.words, text.text)
 
         with open(found_word_path, 'w', encoding='utf8') as output_file:
@@ -40,14 +42,16 @@ def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_result
         for index in indices:
             word_lengths[index].append(len(word))
 
-    #running sentence extraction from index list 
+    # running sentence extraction from index list
     all_sentence_trees = run_get_sentence_trees_MP(word_lengths, text.text)
 
     if save_results:
         # append all sentences to one long list and remove all sentences with less than two words
-        all_sentences = list(filter(lambda sentence: len(sentence.split(' ')) > 2, reduce(lambda a,b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees), [])))
+        all_sentences = list(filter(lambda sentence: len(sentence.split(' ')) > 2, reduce(
+            lambda a, b: a + b, map(lambda tree: tree.get_sentences(), all_sentence_trees), [])))
 
-        save_sentences_path = os.path.join(os.path.normpath(api.config['SENTENCES_FOLDER']), f"{text.name}-{lexicon.name}-{letter_offset}.txt")
+        save_sentences_path = os.path.join(os.path.normpath(
+            api.config['SENTENCES_FOLDER']), f"{text.name}-{lexicon.name}-{letter_offset}.txt")
         os.makedirs(api.config['SENTENCES_FOLDER'], exist_ok=True)
 
         with open(save_sentences_path, 'w', encoding='utf8') as save_file:
@@ -55,6 +59,7 @@ def run_algorithm(api, text, lexicon, letter_offset=2, from_stage=0, save_result
 
     print("DEBUG: algorithm finished")
     return all_sentences
+
 
 # usage example
 if __name__ == "__main__":
