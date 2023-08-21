@@ -10,8 +10,9 @@ TEXT_NAME = "nztest.txt"
 TEXT_NAME = "bereshit-36.txt"
 DICT_NAME = "testdict.txt"
 
-# STEP = -4
-STEP = 4
+STEP = -4
+# STEP = 4
+
 
 letters = list("קראטוןםפשדגכעיחלךףזסבהנמצתץ")
 sofit_translation = {
@@ -81,13 +82,11 @@ for slice_index in range(step):
 words = pd.DataFrame(data=words)
 # print(words.sort_values(by=['source start']))
 # words.sort_values(by=['slice start'], inplace=True)
-print(words)
+# print(words)
 
 sentences_global = []
 for slice_index in range(words.slice.min(), words.slice.max()+1):
-    print(f"SLICE {slice_index}")
     slice = words[words['slice'] == slice_index]
-    print(slice)
     sentences = []
     for w_index, row in slice.iterrows():
         next_words = words[words['slice start'] == row['slice end']]
@@ -96,7 +95,6 @@ for slice_index in range(words.slice.min(), words.slice.max()+1):
             for nw_index, word in next_words.iterrows():
                 sentences.append([w_index] + [nw_index])
 
-    print(sentences)
     changed = True
     while changed:
         changed = False
@@ -126,5 +124,27 @@ for s in sentences_global:
     }
     sentence_data.append(row_dict)
 
-sdf = pd.DataFrame(data=sentence_data)
-print(sdf)
+sentences = pd.DataFrame(data=sentence_data)
+
+prefix = f"{TEXT_NAME}_{STEP}"
+words.to_sql(name=f"{prefix}_words",
+             con=db,
+             if_exists='replace')
+sentences.to_sql(name=f"{prefix}_sentences",
+                 con=db,
+                 if_exists='replace')
+
+cursor = db.cursor()
+cursor.execute("""
+SELECT name FROM sqlite_master WHERE type='table';
+""")
+tables = cursor.fetchall()
+tables = [x[0] for x in tables if "sentences" in x[0]]
+print(tables)
+
+tablename = tables[0]
+df = pd.read_sql(f"SELECT * FROM '{tablename}'",
+                 db)
+
+sentences = df['source start'].astype(str).str.cat(df['sentence']).tolist()
+print(sentences)

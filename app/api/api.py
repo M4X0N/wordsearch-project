@@ -1,11 +1,13 @@
 import os
+import sqlite3
 from os import walk
 
+import pandas as pd
 from docx import Document
 from flask import Flask, request
 from flask_cors import CORS
+
 from logic.classes.lexicon import lexicon
-from logic.classes.secret_text import secret_text
 from logic.run_algorithm import run_algorithm
 
 api = Flask(__name__)
@@ -26,7 +28,7 @@ def valid_letter_offset(letter_offset):
     if not letter_offset.isnumeric():
         return False
 
-    return int(letter_offset) > 0
+    return abs(int(letter_offset)) > 2
 
 
 def valid_min_max_lengths(min, max):
@@ -101,29 +103,51 @@ def get_lexicon_names():
 
 @api.route('/api/files/sentences/names', methods=["GET"])
 def get_sentence_file_names():
-    sentences_dir = api.config['SENTENCES_FOLDER']
-    filenames = next(walk(sentences_dir), (None, None, []))[2]
+    db = sqlite3.connect(api.config['DATABASE'])
+    cursor = db.cursor()
+    cursor.execute("""
+    SELECT name FROM sqlite_master WHERE type='table';
+    """)
+    tables = cursor.fetchall()
+    tables = [x[0] for x in tables if "sentences" in x[0]]
+    return {'filenames': tables}, 200
 
-    return {'fileNames': filenames}, 200
+    # sentences_dir = api.config['SENTENCES_FOLDER']
+    # filenames = next(walk(sentences_dir), (None, None, []))[2]
+
+    # return {'fileNames': filenames}, 200
 
 
 @api.route('/api/files/sentences/<path:filename>', methods=["GET"])
 def get_sentence_file(filename):
-    if len(filename) == 0:
-        return "file name must be non empty", 400
+    db = sqlite3.connect(api.config['DATABASE'])
+    try:
+        df = pd.read_sql(f"SELECT * FROM '{filename}'",
+                         db)
 
-    sentences_dir = os.path.normpath(api.config['SENTENCES_FOLDER'])
-    file_path = os.path.join(sentences_dir, filename)
-
-    if not os.path.isfile(file_path):
+    except:
         return "the specified file doesn't exist", 400
 
-    with open(file_path, 'r') as f:
-        return f.read(), 200
+    sentences = df['source start'].astype(str).str.cat(df['sentence']).tolist()
+    return sentences, 200
+
+    # # TODO: implement as db request
+    # if len(filename) == 0:
+    #     return "file name must be non empty", 400
+    #
+    # sentences_dir = os.path.normpath(api.config['SENTENCES_FOLDER'])
+    # file_path = os.path.join(sentences_dir, filename)
+    #
+    # if not os.path.isfile(file_path):
+    #     return "the specified file doesn't exist", 400
+    #
+    # with open(file_path, 'r') as f:
+    #     return f.read(), 200
 
 
 @api.route('/api/sentence-finder', methods=["POST"])
 def run_sentence_finder():
+    # TODO: remove legacy parts
     text_name = request.json['text_name']
     lexicon_name = request.json['lexicon_name']
     letter_offset = request.json['letter_offset']
@@ -153,15 +177,10 @@ def run_sentence_finder():
 
     lex = lexicon(api, lexicon_name)
 
-    # check if checkpoint file already exists in output. If so, run algorithm from stage 1
-    checkpoint_filename = f'{text_name}-{lexicon_name}-{letter_offset}.txt'
-    stage = 1 if os.path.isfile(os.path.join(
-        api.config['WORDS_FOLDER'], checkpoint_filename)) else 0
-
     # restrict lexicon word lengths
     lex.set_word_limit(int(min_word_length), int(max_word_length))
 
     run_algorithm(api, text_name, text, lex,
-                  letter_offset=int(letter_offset), from_stage=stage, save_results=True)
+                  letter_offset=int(letter_offset), save_results=True)
 
     return "the file was successfully processed and saved by the server", 201
