@@ -64,11 +64,13 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
     print(df)
     words = []
     for slice_index in range(step):
+
         slice = df[(df.index - slice_index) % step == 0]
         slice.reset_index(inplace=True)
         slice_str = slice['char'].str.cat()
 
         for word in lexicon:
+            print(f"Slice: {slice_index}, Word: {word}", end="\r")
             for match in re.finditer(word, slice_str):
                 word_found = {'word': word,
                               'slice': slice_index,
