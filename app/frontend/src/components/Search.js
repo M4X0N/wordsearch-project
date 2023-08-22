@@ -164,8 +164,9 @@ function Search() {
                 <select className="form-select" id="sentenceFileSelect" onChange={changeFileSelection} required>
                   <option value='' selected disabled hidden>{data.choose_here}</option>
                   {
-                    sentenceFileNames.map((fileName, index) => {
-                      const data = fileName.replace(/\.[^/.]+$/, "").split('-');
+                    // sentenceFileNames.map((fileName, index) => {
+                    sentenceFileNames.map(fileName) => {
+                      const data = fileName.replace(/\.[^/.]+$/, "").split('=');
                       const text = data[0];
                       const lexicon = data[1];
                       const offset = data[2];

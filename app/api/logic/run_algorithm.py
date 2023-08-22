@@ -131,10 +131,10 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
 
     sentences = pd.DataFrame(data=sentence_data)
     if save_results:
-        words.to_sql(name=f"{prefix}-words",
+        words.to_sql(name=f"{prefix}=words",
                      con=db,
                      if_exists='replace')
-        sentences.to_sql(name=f"{prefix}-sentences",
+        sentences.to_sql(name=f"{prefix}=sentences",
                          con=db,
                          if_exists='replace')
 
