@@ -29,7 +29,7 @@ def valid_letter_offset(letter_offset):
     if not letter_offset.isnumeric():
         return False
 
-    return abs(int(letter_offset)) > 2
+    return abs(int(letter_offset)) > 1
 
 
 def valid_min_max_lengths(min, max):
