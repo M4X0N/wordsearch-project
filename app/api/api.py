@@ -183,9 +183,10 @@ def run_sentence_finder():
     # lex = lexicon(api, lexicon_name)
 
     # restrict lexicon word lengths
-    lex.set_word_limit(int(min_word_length), int(max_word_length))
+    # lex.set_word_limit(int(min_word_length), int(max_word_length))
 
     run_algorithm(api, text_name, text, lexicon_name, lex,
+                  min_word_length, max_word_length,
                   letter_offset=int(letter_offset), save_results=True)
 
     return "the file was successfully processed and saved by the server", 201

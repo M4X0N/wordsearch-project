@@ -9,8 +9,9 @@ import pandas as pd
 # from .get_sentences import run_get_sentence_trees_MP
 
 
-def run_algorithm(api, text_name, text, lexicon_name,
-                  lexicon, letter_offset=2, save_results=True):
+def run_algorithm(api, text_name, text, lexicon_name, lexicon,
+                  min_word_len, max_word_len,
+                  letter_offset=2, save_results=True):
     prefix = f"{text_name}-{lexicon_name}-{letter_offset}"
     db = sqlite3.connect(api.config['DATABASE'])
 
@@ -25,6 +26,8 @@ def run_algorithm(api, text_name, text, lexicon_name,
 
     lexicon = lexicon.split(';')
     lexicon = pd.Series(data=lexicon)
+    lexicon = lexicon[lexicon.str.len <= max_word_len]
+    lexicon = lexicon[lexicon.str.len >= min_word_len]
     lexicon = lexicon[lexicon.str.contains('|'.join(letters))]
     for sofit, normal in sofit_translation.items():
         lexicon = lexicon.str.replace(sofit, normal)
