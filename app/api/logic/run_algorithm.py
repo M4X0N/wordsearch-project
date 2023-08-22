@@ -26,8 +26,10 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
 
     lexicon = lexicon.split(';')
     lexicon = pd.Series(data=lexicon)
-    lexicon = lexicon[lexicon.str.len <= max_word_len]
-    lexicon = lexicon[lexicon.str.len >= min_word_len]
+
+    lexicon = lexicon[lexicon.str.len() <= max_word_len]
+    lexicon = lexicon[lexicon.str.len() >= min_word_len]
+
     lexicon = lexicon[lexicon.str.contains('|'.join(letters))]
     for sofit, normal in sofit_translation.items():
         lexicon = lexicon.str.replace(sofit, normal)
