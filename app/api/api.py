@@ -180,7 +180,7 @@ def run_sentence_finder():
     with open(path_lexicon) as f:
         lex = f.read()
 
-    lex = lexicon(api, lexicon_name)
+    # lex = lexicon(api, lexicon_name)
 
     # restrict lexicon word lengths
     lex.set_word_limit(int(min_word_length), int(max_word_length))
