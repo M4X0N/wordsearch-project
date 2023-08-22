@@ -10,7 +10,8 @@ import FileUpload from "./FileUpload";
 import Navbar from "./Navbar";
 import LanguageContext from "../contexts/LanguageContext";
 const localization = require('../localization.json')
-axios.defaults.baseURL = `http://torahcodes-hga.org:5000`;
+// axios.defaults.baseURL = `http://localhost:5000`;
+axios.defaults.baseURL = `http://torahcodes-hga.org/api`;
 
 function App() {
   // const data = useContext(LanguageContext).data.app

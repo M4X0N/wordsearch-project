@@ -115,7 +115,7 @@ def get_sentence_file_names():
     print("DEBUG - get_sentence_file_names")
     print(tables)
 
-    return {'filenames': tables}, 200
+    return {'fileNames': tables}, 200
 
     # sentences_dir = api.config['SENTENCES_FOLDER']
     # filenames = next(walk(sentences_dir), (None, None, []))[2]
