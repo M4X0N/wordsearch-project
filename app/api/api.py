@@ -112,6 +112,9 @@ def get_sentence_file_names():
     tables = cursor.fetchall()
     tables = [x[0] for x in tables if "sentences" in x[0]]
 
+    print("DEBUG - get_sentence_file_names")
+    print(tables)
+
     return {'filenames': tables}, 200
 
     # sentences_dir = api.config['SENTENCES_FOLDER']
