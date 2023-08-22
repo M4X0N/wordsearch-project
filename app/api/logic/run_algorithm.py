@@ -12,8 +12,9 @@ import pandas as pd
 # from .get_sentences import run_get_sentence_trees_MP
 
 
-def run_algorithm(api, text_name, text, lexicon, letter_offset=2, save_results=True):
-    prefix = f"{text_name}_{letter_offset}"
+def run_algorithm(api, text_name, text, lexicon_name,
+                  lexicon, letter_offset=2, save_results=True):
+    prefix = f"{text_name}-{lexicon_name}-{letter_offset}"
     db = sqlite3.connect(api.config['DATABASE'])
 
     letters = list("קראטוןםפשדגכעיחלךףזסבהנמצתץ")
@@ -118,10 +119,10 @@ def run_algorithm(api, text_name, text, lexicon, letter_offset=2, save_results=T
 
     sentences = pd.DataFrame(data=sentence_data)
     if save_results:
-        words.to_sql(name=f"{prefix}_words",
+        words.to_sql(name=f"{prefix}-words",
                      con=db,
                      if_exists='replace')
-        sentences.to_sql(name=f"{prefix}_sentences",
+        sentences.to_sql(name=f"{prefix}-sentences",
                          con=db,
                          if_exists='replace')
 

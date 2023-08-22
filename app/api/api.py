@@ -110,6 +110,7 @@ def get_sentence_file_names():
     """)
     tables = cursor.fetchall()
     tables = [x[0] for x in tables if "sentences" in x[0]]
+
     return {'filenames': tables}, 200
 
     # sentences_dir = api.config['SENTENCES_FOLDER']
@@ -180,7 +181,7 @@ def run_sentence_finder():
     # restrict lexicon word lengths
     lex.set_word_limit(int(min_word_length), int(max_word_length))
 
-    run_algorithm(api, text_name, text, lex,
+    run_algorithm(api, text_name, text, lexicon_name, lex,
                   letter_offset=int(letter_offset), save_results=True)
 
     return "the file was successfully processed and saved by the server", 201
