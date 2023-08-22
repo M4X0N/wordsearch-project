@@ -12,6 +12,13 @@ import pandas as pd
 def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                   min_word_len, max_word_len,
                   letter_offset=2, save_results=True):
+    print(f"""
+    DEBUG: run_algoritm with text: {text_name}
+    lexicon {lexicon_name},
+    min_word_len {min_word_len}, max_word_len {max_word_len},
+    letter_offset: {letter_offset}
+    """)
+
     prefix = f"{text_name}-{lexicon_name}-{letter_offset}"
     db = sqlite3.connect(api.config['DATABASE'])
 

@@ -149,7 +149,6 @@ def get_sentence_file(filename):
 
 @api.route('/api/sentence-finder', methods=["POST"])
 def run_sentence_finder():
-    # TODO: remove legacy parts
     text_name = request.json['text_name']
     lexicon_name = request.json['lexicon_name']
     letter_offset = request.json['letter_offset']
