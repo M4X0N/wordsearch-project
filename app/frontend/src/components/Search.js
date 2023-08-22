@@ -165,7 +165,7 @@ function Search() {
                   <option value='' selected disabled hidden>{data.choose_here}</option>
                   {
                     sentenceFileNames.map((fileName, index) => {
-                      const data = fileName.replace(/\.[^/.]+$/, "").split('-');
+                      const data = fileName.split('=');
                       const text = data[0];
                       const lexicon = data[1];
                       const offset = data[2];
