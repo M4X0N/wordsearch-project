@@ -166,9 +166,9 @@ def run_sentence_finder():
     # open text and lexicon
 
     # CRUTCHY WAY TO REPAIR
-    path_text = Path(api.comfig['TEXTS_FOLDER'])
+    path_text = Path(api.config['TEXTS_FOLDER'])
     path_text.joinpath(text_name)
-    path_lexicon = Path(api.comfig['LEXICONS_FOLDER'])
+    path_lexicon = Path(api.config['LEXICONS_FOLDER'])
     path_lexicon.joinpath(lexicon_name)
 
     with open(path_text) as f:
