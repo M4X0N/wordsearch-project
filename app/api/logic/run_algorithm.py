@@ -19,7 +19,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
     letter_offset: {letter_offset}
     """)
 
-    prefix = f"{text_name}-{lexicon_name}-{letter_offset}"
+    prefix = f"{text_name}={lexicon_name}={letter_offset}"
     db = sqlite3.connect(api.config['DATABASE'])
 
     letters = list("קראטוןםפשדגכעיחלךףזסבהנמצתץ")
