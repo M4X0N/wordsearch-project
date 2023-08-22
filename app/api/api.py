@@ -167,9 +167,9 @@ def run_sentence_finder():
 
     # CRUTCHY WAY TO REPAIR
     path_text = Path(api.config['TEXTS_FOLDER'])
-    path_text.joinpath(text_name)
+    path_text = path_text.joinpath(text_name)
     path_lexicon = Path(api.config['LEXICONS_FOLDER'])
-    path_lexicon.joinpath(lexicon_name)
+    path_lexicon = path_lexicon.joinpath(lexicon_name)
 
     with open(path_text) as f:
         if path_text.suffix == '.docx':
