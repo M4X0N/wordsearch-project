@@ -61,7 +61,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
 
     df['clean index'] = df.index
 
-    print(df)
+    # print(df)
     words = []
     for slice_index in range(step):
 
@@ -70,7 +70,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
         slice_str = slice['char'].str.cat()
 
         for word in lexicon:
-            print(f"Slice: {slice_index}, Word: {word}", end="\r")
+            # print(f"Slice: {slice_index}, Word: {word}", end="\r")
             for match in re.finditer(word, slice_str):
                 word_found = {'word': word,
                               'slice': slice_index,
@@ -84,13 +84,13 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                 words.append(word_found)
 
     words = pd.DataFrame(data=words)
-    print(words)
+    # print(words)
 
     sentences_global = []
     for slice_index in range(words.slice.min(), words.slice.max()+1):
-        print(f"SLICE {slice_index}")
+        # print(f"SLICE {slice_index}")
         slice = words[words['slice'] == slice_index]
-        print(slice)
+        # print(slice)
         sentences = []
         for w_index, row in slice.iterrows():
             next_words = words[words['slice start'] == row['slice end']]
