@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve wordsearch
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/wordsearch-project/app/api
+Environment="PATH=/home/ubuntu/wordsearch-project/app/api/venv/bin"
+ExecStart=/home/sammy/myproject/myprojectenv/bin/gunicorn --workers 2 --bind unix:myproject.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
