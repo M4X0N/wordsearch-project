@@ -6,7 +6,13 @@
 - hosts: wsp
   become: yes
   become_method: sudo
+
   tasks:
+  - name: sync backend folder
+    synchronize:
+      src: ../app/api/
+      dest: /home/ubuntu/backend
+
   - name: Install required packages
     package:
       name: "{{ item }}"
@@ -18,4 +24,20 @@
       - libssl-dev 
       - libffi-dev 
       - python3-setuptools
+    when: false
 
+  - name: Install python dependencies
+    pip:
+      requirements: /home/ubuntu/backend/requirements.txt
+
+  - name: Install service
+    copy:
+      src: wordsearch_api.service
+      dest: /etc/systemd/system/wordsearch_api.service
+
+  - name: Enable service
+    service:
+      name: wordsearch_api.service
+      state: restarted
+      enabled: yes
+      daemon_reload: true
