@@ -7,4 +7,5 @@ api.config['SENTENCES_FOLDER'] = '/var/wordsearch/sentences'
 api.config['WORDS_FOLDER'] = '/var/wordsearch/words'
 
 api.config['DATABASE'] = '/var/wordsearch/results.db'
-api.run()
+if __name__ == "__main__":
+    api.run()

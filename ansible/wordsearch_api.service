@@ -1,0 +1,14 @@
+[Unit]
+Description=Gunicorn instance to serve wordsearch
+After=network.target
+
+[Service]
+Restart=on-failure
+RestartSec=3s
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/backend
+ExecStart=/usr/local/bin/gunicorn --workers 1 -R --error-logfile "-" --log-level "debug" --timeout 86400 --bind 0.0.0.0:5000 -m 007 main:api
+
+[Install]
+WantedBy=multi-user.target
