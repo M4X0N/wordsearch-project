@@ -61,10 +61,9 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
 
     df['clean index'] = df.index
 
-    # print(df)
     words = []
     for slice_index in range(step):
-
+        print(f"DEBUG: Slice: {slice_index}")
         slice = df[(df.index - slice_index) % step == 0]
         slice.reset_index(inplace=True)
         slice_str = slice['char'].str.cat()
@@ -84,7 +83,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                 words.append(word_found)
 
     words = pd.DataFrame(data=words)
-    # print(words)
+    print(words)
 
     sentences_global = []
     for slice_index in range(words.slice.min(), words.slice.max()+1):
@@ -99,7 +98,6 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                 for nw_index, word in next_words.iterrows():
                     sentences.append([w_index] + [nw_index])
 
-        print(sentences)
         changed = True
         while changed:
             changed = False
@@ -127,9 +125,11 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
             'source start': words['source start'][s[0]],
             'offset':       letter_offset
         }
+        print(row_dict)
         sentence_data.append(row_dict)
 
     sentences = pd.DataFrame(data=sentence_data)
+    print(sentences)
     if save_results:
         words.to_sql(name=f"{prefix}=words",
                      con=db,
@@ -137,5 +137,3 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
         sentences.to_sql(name=f"{prefix}=sentences",
                          con=db,
                          if_exists='replace')
-
-    print("DEBUG: algorithm finished")

@@ -58,7 +58,6 @@ def validate_file(request_files):
 
 @api.route("/api/files/texts", methods=["POST"])
 def upload_text():
-    print("DEBUG, upload_text")
     result, status = validate_file(request.files)
 
     if result != "good":
@@ -111,9 +110,6 @@ def get_sentence_file_names():
     """)
     tables = cursor.fetchall()
     tables = [x[0] for x in tables if "sentences" in x[0]]
-
-    print("DEBUG - get_sentence_file_names")
-    print(tables)
 
     return {'fileNames': tables}, 200
 
@@ -191,4 +187,5 @@ def run_sentence_finder():
                   min_word_length, max_word_length,
                   letter_offset=int(letter_offset), save_results=True)
 
+    print("Sentence finder finished")
     return "the file was successfully processed and saved by the server", 201
