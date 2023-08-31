@@ -210,14 +210,12 @@ sentences = pd.DataFrame(data=sentences_data)
 sentences.drop_duplicates(inplace=True)
 print(sentences)
 
-exit(0)
-
-prefix = f"{TEXT_NAME}_{STEP}"
+prefix = f"{TEXT_NAME}={STEP}"
 words.drop(columns=['prev word indices', 'next word indices'], inplace=True)
-words.to_sql(name=f"{prefix}_words",
+words.to_sql(name=f"{prefix}=words",
              con=db,
              if_exists='replace')
-sentences.to_sql(name=f"{prefix}_sentences",
+sentences.to_sql(name=f"{prefix}=sentences",
                  con=db,
                  if_exists='replace')
 
@@ -227,11 +225,9 @@ SELECT name FROM sqlite_master WHERE type='table';
 """)
 tables = cursor.fetchall()
 tables = [x[0] for x in tables if "sentences" in x[0]]
-print(tables)
 
 tablename = tables[0]
 df = pd.read_sql(f"SELECT * FROM '{tablename}'",
                  db)
 
 sentences = df['source start'].astype(str).str.cat(df['sentence']).tolist()
-print(sentences)

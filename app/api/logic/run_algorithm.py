@@ -105,6 +105,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
         print("searching for sentences")
         sentences = []
         sentences_finished = []
+        words_backup = words.copy()
 
         def get_next_word_indices(row):
             return words[words['slice start'] == row['slice end']].index.tolist()
@@ -122,7 +123,6 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
             lambda x: len(x['prev word indices']), axis=1)
         words['next count'] = words.apply(
             lambda x: len(x['next word indices']), axis=1)
-        words_backup = words.copy()
 
         single_words = words[words['next count'] == 0]
         single_words = single_words[single_words['prev count'] == 0]
@@ -194,7 +194,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                 del sentence_end[key]
             for key in ['slice start', 'slice end', 'word',
                         'prev count', 'next count',
-                        # 'source end', 'clean end',
+                        'source end', 'clean end',
                         'next word indices', 'prev word indices']:
                 del sentence_row[key]
                 del sentence_end[key]
@@ -207,6 +207,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
     sentences.drop_duplicates(inplace=True)
     print()
     print(sentences)
+    print(words)
 
     if save_results:
         words.to_sql(name=f"{prefix}=words",
