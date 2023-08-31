@@ -14,7 +14,7 @@ DICT_NAME = "testdict.txt"
 # STEP = -4
 # STEP = 3
 # STEP = -3
-# STEP = 4
+STEP = 4
 
 
 letters = list("קראטוןםפשדגכעיחלךףזסבהנמצתץ")

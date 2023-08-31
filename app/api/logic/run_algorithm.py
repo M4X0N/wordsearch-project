@@ -91,7 +91,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                               }
                 words.append(word_found)
             show_progress({
-                "Slice": (slice_index+1, abs(offset)),
+                "Slice": (slice_index+1, abs(letter_offset)),
                 "Word": (i+1, len(lexicon))
             })
             i += 1
