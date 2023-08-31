@@ -61,15 +61,24 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
 
     df['clean index'] = df.index
 
-    words = []
+    def show_progress(prog_dict):
+        string = []
+        for k, v in prog_dict.items():
+            string.append(f"{k}: {v[0]}/{v[1]}")
+        string = "; ".join(string)
+        print(string, end="\r")
+
+    sentences_data = []
     for slice_index in range(step):
-        print(f"DEBUG: Slice: {slice_index}")
+        words = []
         slice = df[(df.index - slice_index) % step == 0]
         slice.reset_index(inplace=True)
         slice_str = slice['char'].str.cat()
 
+        print("searching for words")
+
+        i = 0
         for word in lexicon:
-            # print(f"Slice: {slice_index}, Word: {word}", end="\r")
             for match in re.finditer(word, slice_str):
                 word_found = {'word': word,
                               'slice': slice_index,
@@ -81,55 +90,130 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                               'source end': slice.iloc[match.end()-1]['source index']
                               }
                 words.append(word_found)
+            show_progress({
+                "Slice": (slice_index+1, abs(letter_offset)),
+                "Word": (i+1, len(lexicon))
+            })
+            i += 1
+        print()
+        words = pd.DataFrame(data=words)
+        # print(words)
+        if len(words) == 0:
+            continue
+        words.sort_values(by=['slice start'], inplace=True)
 
-    words = pd.DataFrame(data=words)
+        print("searching for sentences")
+        sentences = []
+        sentences_finished = []
+
+        def get_next_word_indices(row):
+            return words[words['slice start'] == row['slice end']].index.tolist()
+
+        def get_prev_word_indices(row):
+            return words[words['slice end'] == row['slice start']].index.tolist()
+
+        words['prev word indices'] = words.apply(
+            lambda x: get_prev_word_indices(x), axis=1)
+
+        words['next word indices'] = words.apply(
+            lambda x: get_next_word_indices(x), axis=1)
+
+        words['prev count'] = words.apply(
+            lambda x: len(x['prev word indices']), axis=1)
+        words['next count'] = words.apply(
+            lambda x: len(x['next word indices']), axis=1)
+
+        words_backup = words.copy()
+
+        single_words = words[words['next count'] == 0]
+        single_words = single_words[single_words['prev count'] == 0]
+        sentences_finished.append(single_words.index.to_list())
+        words.drop(inplace=True, index=single_words.index)
+
+        starts = words[words['prev count'] == 0]
+        words.drop(inplace=True, index=starts.index)
+        ends = words[words['next count'] == 0]
+        words.drop(inplace=True, index=ends.index)
+
+        for index, row in starts.iterrows():
+            isin = ends.index.isin(row['next word indices'])
+            if isin.any():
+                for end_index in ends[isin].index:
+                    # print(f"Sentence finished {index} w/ index {end_index}")
+                    sentences_finished.append([index, end_index])
+
+            isin = words.index.isin(row['next word indices'])
+            if isin.any():
+                for next_index in words[isin].index:
+                    # print(f"Sentence appended {index} w/ index {next_index}")
+                    sentences.append([index, next_index])
+            show_progress({
+                "Slice": (slice_index+1, abs(letter_offset)),
+                "Finished/Sentences": (len(sentences_finished), len(sentences))
+            })
+
+        while len(sentences) > 0:
+            s = sentences.pop()
+            if not words.index.isin([s[-1]]).any():
+                sentences_finished.append(s)
+                continue
+            row = words.loc[s[-1]]
+
+            isin = ends.index.isin(row['next word indices'])
+            if isin.any():
+                for end_index in ends[isin].index:
+                    # print(f"Sentence finished {s} w/ index {end_index}")
+                    s.append(end_index)
+                    sentences_finished.append(s)
+
+            isin = words.index.isin(row['next word indices'])
+            if isin.any():
+                for next_index in words[isin].index:
+                    # print(f"Sentence appended {s} w/ index {next_index}")
+                    s.append(next_index)
+                    sentences.append(s)
+            show_progress({
+                "Slice": (slice_index+1, abs(letter_offset)),
+                "Sentences/Finished": (len(sentences), len(sentences_finished))
+            })
+
+        print()
+        # Converting list of indices to actual sentences
+        words = words_backup
+        for s in sentences_finished:
+            rows = []
+            for index in s:
+                rows.append(words.loc[index])
+            # print(rows)
+
+            sentence = [x['word'] for x in rows]
+            sentence = " ".join(sentence)
+            sentence_row = rows[0].to_dict()
+            sentence_end = rows[-1].to_dict()
+
+            for key in ['clean start', 'source start']:
+                del sentence_end[key]
+            for key in ['slice start', 'slice end', 'word',
+                        'prev count', 'next count',
+                        'source end', 'clean end',
+                        'next word indices', 'prev word indices']:
+                del sentence_row[key]
+                del sentence_end[key]
+            sentence_row.update(sentence_end)
+            sentence_row['sentence'] = sentence
+            sentence_row['offset'] = letter_offset
+            sentences_data.append(sentence_row)
+
+    sentences = pd.DataFrame(data=sentences_data)
+    sentences.drop_duplicates(inplace=True)
+    words.drop(columns=['prev count', 'next count',
+                        'next word indices', 'prev word indices'
+                        ], inplace=True)
+
+    print()
+    print(sentences)
     print(words)
 
-    sentences_global = []
-    for slice_index in range(words.slice.min(), words.slice.max()+1):
-        # print(f"SLICE {slice_index}")
-        slice = words[words['slice'] == slice_index]
-        # print(slice)
-        sentences = []
-        for w_index, row in slice.iterrows():
-            next_words = words[words['slice start'] == row['slice end']]
-
-            if not next_words.empty:
-                for nw_index, word in next_words.iterrows():
-                    sentences.append([w_index] + [nw_index])
-
-        changed = True
-        while changed:
-            changed = False
-            sentences_new = []
-            for s in sentences:
-                for sn in sentences:
-                    if s[-1] == sn[0]:
-                        changed = True
-                        sentences_new.append(s+sn[1:])
-
-            if changed:
-                sentences = sentences_new
-        sentences_global += sentences
-
-    sentence_data = []
-    for s in sentences_global:
-        sentence = ""
-        for wi in s:
-            row = words.iloc[wi]
-            sentence = ' '.join([sentence, row['word']])
-
-        row_dict = {
-            'sentence':     sentence,
-            'clean start':  words['clean start'][s[0]],
-            'source start': words['source start'][s[0]],
-            'offset':       letter_offset
-        }
-        print(row_dict)
-        sentence_data.append(row_dict)
-
-    sentences = pd.DataFrame(data=sentence_data)
-    print(sentences)
     if save_results:
         words.to_sql(name=f"{prefix}=words",
                      con=db,
