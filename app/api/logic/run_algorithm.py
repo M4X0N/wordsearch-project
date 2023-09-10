@@ -8,6 +8,8 @@ import pandas as pd
 # from .find_word_indices import run_find_all_MP
 # from .get_sentences import run_get_sentence_trees_MP
 
+SHOW_PROGRESS = False
+
 
 def run_algorithm(api, text_name, text, lexicon_name, lexicon,
                   min_word_len, max_word_len,
@@ -62,6 +64,8 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
     df['clean index'] = df.index
 
     def show_progress(prog_dict):
+        if not SHOW_PROGRESS:
+            return
         string = []
         for k, v in prog_dict.items():
             string.append(f"{k}: {v[0]}/{v[1]}")
@@ -153,7 +157,7 @@ def run_algorithm(api, text_name, text, lexicon_name, lexicon,
             })
 
         while len(sentences) > 0:
-            s = sentences.pop()
+            s = sentences.pop(0)
             if not words.index.isin([s[-1]]).any():
                 sentences_finished.append(s)
                 continue
